@@ -1,0 +1,168 @@
+post:
+  summary: Create entry
+  operationId: createEntry
+  responses:
+    '201':
+      description: Successful response
+      content:
+        application/json:
+          schema:
+            $ref: ../components/schemas.yaml#/Entry
+    '400':
+      description: Bad request
+      content:
+        application/json:
+          schema:
+            $ref: ../components/schemas.yaml#/Error
+    '401':
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: ../components/schemas.yaml#/Error
+    '403':
+      description: Forbidden
+      content:
+        application/json:
+          schema:
+            $ref: ../components/schemas.yaml#/Error
+    '404':
+      description: Not found
+      content:
+        application/json:
+          schema:
+            $ref: ../components/schemas.yaml#/Error
+    '409':
+      description: Conflict
+      content:
+        application/json:
+          schema:
+            $ref: ../components/schemas.yaml#/Error
+  tags:
+  - Entries
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: ../components/schemas.yaml#/CreateEntryRequest
+get:
+  summary: List entries
+  operationId: listEntries
+  responses:
+    '200':
+      description: Successful response
+      content:
+        application/json:
+          schema:
+            $ref: ../components/schemas.yaml#/EntryListResponse
+    '400':
+      description: Bad request
+      content:
+        application/json:
+          schema:
+            $ref: ../components/schemas.yaml#/Error
+    '401':
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: ../components/schemas.yaml#/Error
+    '403':
+      description: Forbidden
+      content:
+        application/json:
+          schema:
+            $ref: ../components/schemas.yaml#/Error
+    '404':
+      description: Not found
+      content:
+        application/json:
+          schema:
+            $ref: ../components/schemas.yaml#/Error
+    '409':
+      description: Conflict
+      content:
+        application/json:
+          schema:
+            $ref: ../components/schemas.yaml#/Error
+  tags:
+  - Entries
+  parameters:
+  - name: entry_type
+    in: query
+    required: false
+    schema:
+      type: string
+  - name: intent
+    in: query
+    required: false
+    schema:
+      type: string
+  - name: target_id
+    in: query
+    required: false
+    schema:
+      type: string
+  - name: collection_id
+    in: query
+    required: false
+    schema:
+      type: string
+  - name: workflow_state
+    in: query
+    required: false
+    schema:
+      type: string
+  - name: publication_state
+    in: query
+    required: false
+    schema:
+      type: string
+  - name: review_state
+    in: query
+    required: false
+    schema:
+      type: string
+  - name: moderation_state
+    in: query
+    required: false
+    schema:
+      type: string
+  - name: confidence
+    in: query
+    required: false
+    schema:
+      type: string
+  - name: verification
+    in: query
+    required: false
+    schema:
+      type: string
+  - name: visibility
+    in: query
+    required: false
+    schema:
+      type: string
+  - name: author
+    in: query
+    required: false
+    schema:
+      type: string
+  - name: domain_pack
+    in: query
+    required: false
+    schema:
+      type: string
+  - name: cursor
+    in: query
+    required: false
+    schema:
+      type: string
+  - name: limit
+    in: query
+    required: false
+    schema:
+      type: integer
+      minimum: 1
+      maximum: 500

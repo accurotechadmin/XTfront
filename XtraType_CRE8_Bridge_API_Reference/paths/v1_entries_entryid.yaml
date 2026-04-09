@@ -1,0 +1,153 @@
+get:
+  summary: Get entry
+  operationId: getEntry
+  responses:
+    '200':
+      description: Successful response
+      content:
+        application/json:
+          schema:
+            $ref: ../components/schemas.yaml#/Entry
+    '400':
+      description: Bad request
+      content:
+        application/json:
+          schema:
+            $ref: ../components/schemas.yaml#/Error
+    '401':
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: ../components/schemas.yaml#/Error
+    '403':
+      description: Forbidden
+      content:
+        application/json:
+          schema:
+            $ref: ../components/schemas.yaml#/Error
+    '404':
+      description: Not found
+      content:
+        application/json:
+          schema:
+            $ref: ../components/schemas.yaml#/Error
+    '409':
+      description: Conflict
+      content:
+        application/json:
+          schema:
+            $ref: ../components/schemas.yaml#/Error
+  tags:
+  - Entries
+  parameters:
+  - name: entryId
+    in: path
+    required: true
+    schema:
+      type: string
+    description: Entry identifier
+patch:
+  summary: Update entry
+  operationId: updateEntry
+  responses:
+    '200':
+      description: Successful response
+      content:
+        application/json:
+          schema:
+            $ref: ../components/schemas.yaml#/Entry
+    '400':
+      description: Bad request
+      content:
+        application/json:
+          schema:
+            $ref: ../components/schemas.yaml#/Error
+    '401':
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: ../components/schemas.yaml#/Error
+    '403':
+      description: Forbidden
+      content:
+        application/json:
+          schema:
+            $ref: ../components/schemas.yaml#/Error
+    '404':
+      description: Not found
+      content:
+        application/json:
+          schema:
+            $ref: ../components/schemas.yaml#/Error
+    '409':
+      description: Conflict
+      content:
+        application/json:
+          schema:
+            $ref: ../components/schemas.yaml#/Error
+  tags:
+  - Entries
+  parameters:
+  - name: entryId
+    in: path
+    required: true
+    schema:
+      type: string
+    description: Entry identifier
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: ../components/schemas.yaml#/UpdateEntryRequest
+delete:
+  summary: Delete or archive entry
+  operationId: deleteEntry
+  responses:
+    '200':
+      description: Successful response
+      content:
+        application/json:
+          schema:
+            $ref: ../components/schemas.yaml#/DeleteResponse
+    '400':
+      description: Bad request
+      content:
+        application/json:
+          schema:
+            $ref: ../components/schemas.yaml#/Error
+    '401':
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: ../components/schemas.yaml#/Error
+    '403':
+      description: Forbidden
+      content:
+        application/json:
+          schema:
+            $ref: ../components/schemas.yaml#/Error
+    '404':
+      description: Not found
+      content:
+        application/json:
+          schema:
+            $ref: ../components/schemas.yaml#/Error
+    '409':
+      description: Conflict
+      content:
+        application/json:
+          schema:
+            $ref: ../components/schemas.yaml#/Error
+  tags:
+  - Entries
+  parameters:
+  - name: entryId
+    in: path
+    required: true
+    schema:
+      type: string
+    description: Entry identifier

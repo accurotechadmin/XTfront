@@ -1,0 +1,153 @@
+get:
+  summary: Get comment
+  operationId: getComment
+  responses:
+    '200':
+      description: Successful response
+      content:
+        application/json:
+          schema:
+            $ref: ../components/schemas.yaml#/Comment
+    '400':
+      description: Bad request
+      content:
+        application/json:
+          schema:
+            $ref: ../components/schemas.yaml#/Error
+    '401':
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: ../components/schemas.yaml#/Error
+    '403':
+      description: Forbidden
+      content:
+        application/json:
+          schema:
+            $ref: ../components/schemas.yaml#/Error
+    '404':
+      description: Not found
+      content:
+        application/json:
+          schema:
+            $ref: ../components/schemas.yaml#/Error
+    '409':
+      description: Conflict
+      content:
+        application/json:
+          schema:
+            $ref: ../components/schemas.yaml#/Error
+  tags:
+  - Comments
+  parameters:
+  - name: commentId
+    in: path
+    required: true
+    schema:
+      type: string
+    description: Comment identifier
+patch:
+  summary: Update comment
+  operationId: updateComment
+  responses:
+    '200':
+      description: Successful response
+      content:
+        application/json:
+          schema:
+            $ref: ../components/schemas.yaml#/Comment
+    '400':
+      description: Bad request
+      content:
+        application/json:
+          schema:
+            $ref: ../components/schemas.yaml#/Error
+    '401':
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: ../components/schemas.yaml#/Error
+    '403':
+      description: Forbidden
+      content:
+        application/json:
+          schema:
+            $ref: ../components/schemas.yaml#/Error
+    '404':
+      description: Not found
+      content:
+        application/json:
+          schema:
+            $ref: ../components/schemas.yaml#/Error
+    '409':
+      description: Conflict
+      content:
+        application/json:
+          schema:
+            $ref: ../components/schemas.yaml#/Error
+  tags:
+  - Comments
+  parameters:
+  - name: commentId
+    in: path
+    required: true
+    schema:
+      type: string
+    description: Comment identifier
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: ../components/schemas.yaml#/UpdateCommentRequest
+delete:
+  summary: Delete comment
+  operationId: deleteComment
+  responses:
+    '200':
+      description: Successful response
+      content:
+        application/json:
+          schema:
+            $ref: ../components/schemas.yaml#/DeleteResponse
+    '400':
+      description: Bad request
+      content:
+        application/json:
+          schema:
+            $ref: ../components/schemas.yaml#/Error
+    '401':
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: ../components/schemas.yaml#/Error
+    '403':
+      description: Forbidden
+      content:
+        application/json:
+          schema:
+            $ref: ../components/schemas.yaml#/Error
+    '404':
+      description: Not found
+      content:
+        application/json:
+          schema:
+            $ref: ../components/schemas.yaml#/Error
+    '409':
+      description: Conflict
+      content:
+        application/json:
+          schema:
+            $ref: ../components/schemas.yaml#/Error
+  tags:
+  - Comments
+  parameters:
+  - name: commentId
+    in: path
+    required: true
+    schema:
+      type: string
+    description: Comment identifier

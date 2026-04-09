@@ -1,0 +1,26 @@
+get:
+  summary: Get public map page
+  operationId: getPublicMap
+  responses:
+    '200':
+      description: Successful response
+      content:
+        application/json:
+          schema:
+            $ref: ../components/schemas.yaml#/JsonObject
+    '404':
+      description: Not found
+      content:
+        application/json:
+          schema:
+            $ref: ../components/schemas.yaml#/Error
+  tags:
+  - Public
+  parameters:
+  - name: slug
+    in: path
+    required: true
+    schema:
+      type: string
+    description: Public slug
+  security: []
