@@ -1,0 +1,27 @@
+{
+  "dashboard": "parity-v0",
+  "refreshed_at": "2026-04-09T16:30:00Z",
+  "sections": {
+    "schema_parity": {
+      "pass_rate": 1.0,
+      "drift_open": 0
+    },
+    "error_parity": {
+      "coverage": 1.0,
+      "mismatches": 0
+    },
+    "policy_parity": {
+      "conformance": 1.0,
+      "open_disputes": 0
+    },
+    "telemetry_parity": {
+      "request_id_propagation": 1.0,
+      "event_emission_coverage": 1.0
+    },
+    "drift_status": {
+      "open": 0,
+      "sla_breach": 0
+    }
+  },
+  "linked_index": "parity/day2/index.json"
+}

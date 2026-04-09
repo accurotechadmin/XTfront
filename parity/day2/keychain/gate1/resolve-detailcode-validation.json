@@ -1,0 +1,18 @@
+{
+  "method_path": "GET /console/api/keychains/{keychainId}/resolve",
+  "previous_state": "provisional-mapping",
+  "current_state": "resolved",
+  "resolution": {
+    "canonical_error_family": "policy.denied",
+    "detail_code_mapping": "policy.keychain.resolve.scope_denied",
+    "policy_table_ref": "AUTHZ_DECISION_TABLES::KEYCHAIN_RESOLVE_SCOPE",
+    "validation_source": "ERROR_CODE_CATALOG + AUTHORIZATION_DECISION_TABLES",
+    "validated_at": "2026-04-09T15:40:00Z"
+  },
+  "owners": {
+    "frontend": "FE Governance Lead",
+    "backend": "BE Keychain Lead"
+  },
+  "checkpoint_impact": "P2",
+  "status": "closed"
+}

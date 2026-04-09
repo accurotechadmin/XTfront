@@ -1,0 +1,71 @@
+{
+  "day": "day2",
+  "generated_at": "2026-04-09T16:45:00Z",
+  "summary": {
+    "overall_status": "green",
+    "gate": "gate1_envelope_error_request_id",
+    "route_families": ["auth", "feed", "keychain"],
+    "provisional_mappings_open_count": 0,
+    "p2_risk_status": "cleared"
+  },
+  "route_families": [
+    {
+      "name": "auth",
+      "gate_status": {
+        "gate1_envelope_error_request_id": "green"
+      },
+      "artifacts": [
+        "parity/day2/gate1/parity-rerun-report.json",
+        "parity/day2/dashboard/dashboard-v0-refresh.json"
+      ]
+    },
+    {
+      "name": "feed",
+      "gate_status": {
+        "gate1_envelope_error_request_id": "green"
+      },
+      "artifacts": [
+        "parity/day2/gate1/parity-rerun-report.json",
+        "parity/day2/dashboard/dashboard-v0-refresh.json"
+      ]
+    },
+    {
+      "name": "keychain",
+      "gate_status": {
+        "gate1_envelope_error_request_id": "green"
+      },
+      "artifacts": [
+        "parity/day2/keychain/gate1/resolve-detailcode-validation.json",
+        "parity/day2/gate1/parity-rerun-report.json",
+        "parity/day2/dashboard/dashboard-v0-refresh.json"
+      ]
+    }
+  ],
+  "artifact_deltas_from_day1": {
+    "added": [
+      "parity/day2/keychain/gate1/resolve-detailcode-validation.json",
+      "parity/day2/gate1/parity-rerun-report.json",
+      "parity/day2/dashboard/dashboard-v0-refresh.json",
+      "parity/day2/index.json"
+    ],
+    "updated": [
+      "parity/icd_pilot_rows.csv"
+    ],
+    "removed": []
+  },
+  "provisional_mappings_open": [],
+  "owner_deadline_register": [
+    {
+      "owner": "FE Governance Lead",
+      "responsibility": "Finalize keychain resolve detail-code mapping",
+      "due_at": "2026-04-09T14:00:00Z",
+      "status": "completed"
+    },
+    {
+      "owner": "BE Keychain Lead",
+      "responsibility": "Validate canonical policy/detail-code mapping source linkage",
+      "due_at": "2026-04-09T14:00:00Z",
+      "status": "completed"
+    }
+  ]
+}
