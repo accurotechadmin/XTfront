@@ -1,0 +1,84 @@
+get:
+  summary: Query overlay feed
+  operationId: queryOverlay
+  responses:
+    '200':
+      description: Successful response
+      content:
+        application/json:
+          schema:
+            $ref: ../components/schemas.yaml#/OverlayQueryResponse
+    '400':
+      description: Bad request
+      content:
+        application/json:
+          schema:
+            $ref: ../components/schemas.yaml#/Error
+    '401':
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: ../components/schemas.yaml#/Error
+    '403':
+      description: Forbidden
+      content:
+        application/json:
+          schema:
+            $ref: ../components/schemas.yaml#/Error
+    '404':
+      description: Not found
+      content:
+        application/json:
+          schema:
+            $ref: ../components/schemas.yaml#/Error
+    '409':
+      description: Conflict
+      content:
+        application/json:
+          schema:
+            $ref: ../components/schemas.yaml#/Error
+  tags:
+  - Publication
+  parameters:
+  - name: url
+    in: query
+    required: false
+    schema:
+      type: string
+      format: uri
+  - name: quote
+    in: query
+    required: false
+    schema:
+      type: string
+  - name: bbox
+    in: query
+    required: false
+    schema:
+      type: string
+  - name: route_segment
+    in: query
+    required: false
+    schema:
+      type: string
+  - name: object_id
+    in: query
+    required: false
+    schema:
+      type: string
+  - name: density
+    in: query
+    required: false
+    schema:
+      type: string
+  - name: trust_filters
+    in: query
+    required: false
+    schema:
+      type: string
+  - name: audience_scope
+    in: query
+    required: false
+    schema:
+      type: string
