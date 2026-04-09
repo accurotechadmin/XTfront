@@ -1,0 +1,4236 @@
+Id:
+  type: string
+  description: Stable identifier, preferably ULID or prefixed ULID.
+Timestamp:
+  type: string
+  format: date-time
+JsonObject:
+  type: object
+  additionalProperties: true
+PaginationMeta:
+  type: object
+  properties:
+    cursor:
+      type:
+      - string
+      - 'null'
+    next_cursor:
+      type:
+      - string
+      - 'null'
+    limit:
+      type: integer
+      minimum: 1
+      maximum: 500
+    has_more:
+      type: boolean
+  required:
+  - limit
+  - has_more
+Error:
+  type: object
+  properties:
+    error:
+      type: object
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+        details:
+          type: object
+          additionalProperties: true
+      required:
+      - code
+      - message
+  required:
+  - error
+MutationMeta:
+  type: object
+  properties:
+    client_mutation_id:
+      type: string
+    idempotency_key:
+      type: string
+    if_revision:
+      type: integer
+      minimum: 0
+ActorIdentity:
+  type: object
+  properties:
+    actor_id:
+      $ref: '#/Id'
+    key_id:
+      oneOf:
+      - $ref: '#/Id'
+      - type: 'null'
+    display_name:
+      type:
+      - string
+      - 'null'
+  required:
+  - actor_id
+PermissionSummary:
+  type: object
+  properties:
+    can_view:
+      type: boolean
+    can_edit:
+      type: boolean
+    can_comment:
+      type: boolean
+    can_review:
+      type: boolean
+    can_publish:
+      type: boolean
+  required:
+  - can_view
+  - can_edit
+  - can_comment
+  - can_review
+  - can_publish
+Visibility:
+  type: object
+  properties:
+    visibility_class:
+      type: string
+      enum:
+      - private
+      - workspace
+      - restricted_group
+      - review_only
+      - link_shared
+      - public
+      - layer_specific
+    audience_group_ids:
+      type: array
+      items:
+        $ref: '#/Id'
+    inheritance_mode:
+      type: string
+      enum:
+      - local
+      - inherited
+      - overridden
+  required:
+  - visibility_class
+WorkflowState:
+  type: object
+  properties:
+    draft_state:
+      type: string
+      enum:
+      - draft_saved
+      - draft_enriched
+      - ready_for_review
+    review_state:
+      type: string
+      enum:
+      - none
+      - pending
+      - in_review
+      - reviewed
+    moderation_state:
+      type: string
+      enum:
+      - none
+      - flagged
+      - restricted
+      - moderated
+    resolution_state:
+      type: string
+      enum:
+      - open
+      - resolved
+      - superseded
+    publication_state:
+      type: string
+      enum:
+      - private
+      - staged
+      - published
+      - embedded
+      - archived
+    assignment:
+      type: object
+      properties:
+        assignee_actor_id:
+          oneOf:
+          - $ref: '#/Id'
+          - type: 'null'
+        assignee_group_id:
+          oneOf:
+          - $ref: '#/Id'
+          - type: 'null'
+        queue_id:
+          oneOf:
+          - $ref: '#/Id'
+          - type: 'null'
+TrustState:
+  type: object
+  properties:
+    confidence:
+      type: string
+      enum:
+      - low
+      - medium
+      - high
+    verification:
+      type: string
+      enum:
+      - unverified
+      - under_review
+      - verified
+      - rejected
+    dispute:
+      type: string
+      enum:
+      - none
+      - contested
+      - disputed
+    quality:
+      type: string
+      enum:
+      - rough
+      - usable
+      - polished
+    sensitivity:
+      type: string
+      enum:
+      - normal
+      - sensitive
+      - restricted
+Provenance:
+  type: object
+  properties:
+    creation_mode:
+      type: string
+      enum:
+      - captured
+      - asserted
+      - imported
+      - inferred
+      - reviewed
+    capture_surface:
+      type:
+      - string
+      - 'null'
+    technical_capture_metadata:
+      type: object
+      additionalProperties: true
+    integrity_metadata:
+      type: object
+      additionalProperties: true
+    suggestion_provenance:
+      type: object
+      additionalProperties: true
+    transformation_provenance:
+      type: object
+      additionalProperties: true
+ObjectRef:
+  type: object
+  properties:
+    kind:
+      type: string
+      enum:
+      - owner
+      - actor
+      - key
+      - target
+      - entry
+      - comment
+      - relationship
+      - collection
+      - source
+      - publication
+      - overlay
+      - template
+      - vocabulary
+      - live_room
+    id:
+      $ref: '#/Id'
+  required:
+  - kind
+  - id
+DomainEnvelope:
+  type: object
+  properties:
+    id:
+      $ref: '#/Id'
+    object_kind:
+      type: string
+    object_type:
+      type: string
+    schema_version:
+      type: string
+    realm_id:
+      $ref: '#/Id'
+    created_at:
+      $ref: '#/Timestamp'
+    updated_at:
+      $ref: '#/Timestamp'
+    created_by:
+      $ref: '#/ActorIdentity'
+    revision:
+      type: integer
+      minimum: 0
+    permissions:
+      $ref: '#/PermissionSummary'
+    data:
+      type: object
+      additionalProperties: true
+  required:
+  - id
+  - object_kind
+  - object_type
+  - schema_version
+  - realm_id
+  - created_at
+  - updated_at
+  - revision
+  - permissions
+  - data
+Owner:
+  type: object
+  properties:
+    owner_id:
+      $ref: '#/Id'
+    realm_id:
+      $ref: '#/Id'
+    username:
+      type: string
+    email:
+      type: string
+      format: email
+    display_name:
+      type:
+      - string
+      - 'null'
+    status:
+      type: string
+      enum:
+      - active
+      - pending
+      - suspended
+    created_at:
+      $ref: '#/Timestamp'
+  required:
+  - owner_id
+  - realm_id
+  - username
+  - email
+  - status
+  - created_at
+CreateOwnerRequest:
+  allOf:
+  - $ref: '#/MutationMeta'
+  - type: object
+    properties:
+      username:
+        type: string
+      password:
+        type: string
+        minLength: 8
+      email:
+        type: string
+        format: email
+      payment_token:
+        type: string
+      display_name:
+        type: string
+    required:
+    - username
+    - password
+    - email
+    - payment_token
+Session:
+  type: object
+  properties:
+    session_id:
+      $ref: '#/Id'
+    actor:
+      $ref: '#/ActorIdentity'
+    realm_id:
+      $ref: '#/Id'
+    access_token:
+      type: string
+    refresh_token:
+      type: string
+    expires_at:
+      $ref: '#/Timestamp'
+    effective_permissions:
+      type: array
+      items:
+        type: string
+    keychain_id:
+      oneOf:
+      - $ref: '#/Id'
+      - type: 'null'
+  required:
+  - session_id
+  - actor
+  - realm_id
+  - access_token
+  - expires_at
+  - effective_permissions
+OwnerLoginRequest:
+  allOf:
+  - $ref: '#/MutationMeta'
+  - type: object
+    properties:
+      username_or_email:
+        type: string
+      password:
+        type: string
+    required:
+    - username_or_email
+    - password
+DisplayProfile:
+  type: object
+  properties:
+    display_name:
+      type: string
+    avatar_url:
+      type:
+      - string
+      - 'null'
+      format: uri
+KeySessionRequest:
+  allOf:
+  - $ref: '#/MutationMeta'
+  - type: object
+    properties:
+      key_token:
+        type: string
+      display_profile:
+        $ref: '#/DisplayProfile'
+    required:
+    - key_token
+KeychainSessionRequest:
+  allOf:
+  - $ref: '#/MutationMeta'
+  - type: object
+    properties:
+      key_tokens:
+        type: array
+        items:
+          type: string
+        minItems: 1
+    required:
+    - key_tokens
+RefreshSessionRequest:
+  allOf:
+  - $ref: '#/MutationMeta'
+  - type: object
+    properties:
+      refresh_token:
+        type: string
+    required:
+    - refresh_token
+ActorProfile:
+  type: object
+  properties:
+    actor_id:
+      $ref: '#/Id'
+    realm_id:
+      $ref: '#/Id'
+    display_name:
+      type:
+      - string
+      - 'null'
+    avatar_url:
+      type:
+      - string
+      - 'null'
+      format: uri
+    session:
+      $ref: '#/Session'
+    effective_roles:
+      type: array
+      items:
+        type: string
+    effective_permissions:
+      type: array
+      items:
+        type: string
+    authority_chain:
+      type: array
+      items:
+        type: string
+    default_domain_pack:
+      type:
+      - string
+      - 'null'
+    default_capture_settings:
+      type: object
+      additionalProperties: true
+  required:
+  - actor_id
+  - realm_id
+  - effective_roles
+  - effective_permissions
+  - authority_chain
+KeyConstraints:
+  type: object
+  properties:
+    expires_at:
+      oneOf:
+      - $ref: '#/Timestamp'
+      - type: 'null'
+    max_uses:
+      type:
+      - integer
+      - 'null'
+      minimum: 1
+    domain_pack_allowlist:
+      type: array
+      items:
+        type: string
+    entry_type_allowlist:
+      type: array
+      items:
+        type: string
+    collection_scope_ids:
+      type: array
+      items:
+        $ref: '#/Id'
+    audience_scope_ids:
+      type: array
+      items:
+        $ref: '#/Id'
+    publish_allowed:
+      type: boolean
+    review_allowed:
+      type: boolean
+Key:
+  type: object
+  properties:
+    key_id:
+      $ref: '#/Id'
+    realm_id:
+      $ref: '#/Id'
+    key_type:
+      type: string
+      enum:
+      - primary_author
+      - secondary_author
+      - use
+    label:
+      type: string
+    description:
+      type:
+      - string
+      - 'null'
+    grants:
+      type: array
+      items:
+        type: string
+    constraints:
+      $ref: '#/KeyConstraints'
+    status:
+      type: string
+      enum:
+      - active
+      - revoked
+      - expired
+    minted_by_owner_id:
+      oneOf:
+      - $ref: '#/Id'
+      - type: 'null'
+    minted_by_key_id:
+      oneOf:
+      - $ref: '#/Id'
+      - type: 'null'
+    delegation_depth:
+      type: integer
+      minimum: 0
+    authority_chain:
+      type: array
+      items:
+        type: string
+    created_at:
+      $ref: '#/Timestamp'
+  required:
+  - key_id
+  - realm_id
+  - key_type
+  - label
+  - grants
+  - status
+  - delegation_depth
+  - authority_chain
+  - created_at
+CreateKeyRequest:
+  allOf:
+  - $ref: '#/MutationMeta'
+  - type: object
+    properties:
+      key_type:
+        type: string
+        enum:
+        - primary_author
+        - secondary_author
+        - use
+      label:
+        type: string
+      description:
+        type: string
+      grants:
+        type: array
+        items:
+          type: string
+      constraints:
+        $ref: '#/KeyConstraints'
+    required:
+    - key_type
+    - label
+    - grants
+UpdateKeyRequest:
+  allOf:
+  - $ref: '#/MutationMeta'
+  - type: object
+    properties:
+      label:
+        type: string
+      description:
+        type: string
+      grants:
+        type: array
+        items:
+          type: string
+      constraints:
+        $ref: '#/KeyConstraints'
+RevokeRequest:
+  allOf:
+  - $ref: '#/MutationMeta'
+  - type: object
+    properties:
+      reason:
+        type: string
+    required:
+    - reason
+RotateKeyRequest:
+  allOf:
+  - $ref: '#/MutationMeta'
+  - type: object
+    properties:
+      invalidate_old_after:
+        oneOf:
+        - $ref: '#/Timestamp'
+        - type: 'null'
+Keychain:
+  type: object
+  properties:
+    keychain_id:
+      $ref: '#/Id'
+    label:
+      type: string
+    key_ids:
+      type: array
+      items:
+        $ref: '#/Id'
+    effective_grants:
+      type: array
+      items:
+        type: string
+    conflicting_grants:
+      type: array
+      items:
+        type: string
+    narrowed_scopes:
+      type: array
+      items:
+        type: string
+    created_at:
+      $ref: '#/Timestamp'
+  required:
+  - keychain_id
+  - label
+  - key_ids
+  - effective_grants
+  - conflicting_grants
+  - narrowed_scopes
+  - created_at
+CreateKeychainRequest:
+  allOf:
+  - $ref: '#/MutationMeta'
+  - type: object
+    properties:
+      label:
+        type: string
+      key_ids:
+        type: array
+        items:
+          $ref: '#/Id'
+        minItems: 1
+    required:
+    - label
+    - key_ids
+UpdateKeychainRequest:
+  allOf:
+  - $ref: '#/MutationMeta'
+  - type: object
+    properties:
+      label:
+        type: string
+      key_ids:
+        type: array
+        items:
+          $ref: '#/Id'
+AddKeyToKeychainRequest:
+  allOf:
+  - $ref: '#/MutationMeta'
+  - type: object
+    properties:
+      key_id:
+        $ref: '#/Id'
+    required:
+    - key_id
+AudienceGroup:
+  type: object
+  properties:
+    audience_group_id:
+      $ref: '#/Id'
+    name:
+      type: string
+    description:
+      type:
+      - string
+      - 'null'
+    join_mode:
+      type: string
+      enum:
+      - open
+      - invite
+      - request
+      - key_only
+    default_notifications:
+      type: boolean
+    member_count:
+      type: integer
+      minimum: 0
+    created_at:
+      $ref: '#/Timestamp'
+  required:
+  - audience_group_id
+  - name
+  - join_mode
+  - default_notifications
+  - member_count
+  - created_at
+CreateAudienceGroupRequest:
+  allOf:
+  - $ref: '#/MutationMeta'
+  - type: object
+    properties:
+      name:
+        type: string
+      description:
+        type: string
+      join_mode:
+        type: string
+        enum:
+        - open
+        - invite
+        - request
+        - key_only
+      default_notifications:
+        type: boolean
+    required:
+    - name
+    - join_mode
+UpdateAudienceGroupRequest:
+  allOf:
+  - $ref: '#/MutationMeta'
+  - type: object
+    properties:
+      name:
+        type: string
+      description:
+        type: string
+      join_mode:
+        type: string
+        enum:
+        - open
+        - invite
+        - request
+        - key_only
+      default_notifications:
+        type: boolean
+AddAudienceMembersRequest:
+  allOf:
+  - $ref: '#/MutationMeta'
+  - type: object
+    properties:
+      actors:
+        type: array
+        items:
+          $ref: '#/Id'
+      keys:
+        type: array
+        items:
+          $ref: '#/Id'
+      emails:
+        type: array
+        items:
+          type: string
+          format: email
+      role:
+        type: string
+        enum:
+        - member
+        - manager
+        - viewer
+    required:
+    - role
+SubscriptionRequest:
+  allOf:
+  - $ref: '#/MutationMeta'
+  - type: object
+    properties:
+      notification_mode:
+        type: string
+        enum:
+        - default
+        - 'off'
+        - important_only
+        - all
+BootstrapResponse:
+  type: object
+  properties:
+    actor:
+      $ref: '#/ActorProfile'
+    effective_permissions:
+      type: array
+      items:
+        type: string
+    domain_packs:
+      type: array
+      items:
+        type: string
+    target_types:
+      type: array
+      items:
+        type: string
+    entry_types:
+      type: array
+      items:
+        type: string
+    intent_catalog:
+      type: array
+      items:
+        type: string
+    workflow_states:
+      $ref: '#/WorkflowState'
+    visibility_states:
+      type: array
+      items:
+        type: string
+    trust_vocab:
+      $ref: '#/TrustState'
+    templates_summary:
+      type: array
+      items:
+        type: object
+        additionalProperties: true
+    vocabulary_summary:
+      type: array
+      items:
+        type: object
+        additionalProperties: true
+    feature_flags:
+      type: object
+      additionalProperties:
+        type: boolean
+    frontend_capability_flags:
+      type: object
+      additionalProperties:
+        type: boolean
+    upload_configuration:
+      type: object
+      additionalProperties: true
+    realtime:
+      type: object
+      additionalProperties: true
+    overlay_support:
+      type: object
+      additionalProperties: true
+  required:
+  - actor
+  - effective_permissions
+  - domain_packs
+  - target_types
+  - entry_types
+  - intent_catalog
+CapabilitiesResponse:
+  type: object
+  properties:
+    can_create_targets:
+      type: boolean
+    can_create_entries:
+      type: array
+      items:
+        type: string
+    can_comment:
+      type: boolean
+    can_publish:
+      type: boolean
+    can_review:
+      type: boolean
+    can_manage_templates:
+      type: boolean
+    can_manage_vocabularies:
+      type: boolean
+    can_use_overlay:
+      type: boolean
+    can_use_map_view:
+      type: boolean
+  required:
+  - can_create_targets
+  - can_create_entries
+  - can_comment
+  - can_publish
+  - can_review
+  - can_manage_templates
+  - can_manage_vocabularies
+  - can_use_overlay
+  - can_use_map_view
+TargetAddress:
+  oneOf:
+  - type: object
+    properties:
+      kind:
+        type: string
+        const: url
+      url:
+        type: string
+        format: uri
+      canonical_url:
+        type:
+        - string
+        - 'null'
+        format: uri
+      title:
+        type:
+        - string
+        - 'null'
+      selector:
+        type: object
+        properties:
+          quote:
+            type:
+            - string
+            - 'null'
+          text_position:
+            type: object
+            properties:
+              start:
+                type: integer
+              end:
+                type: integer
+          dom_selector:
+            type:
+            - string
+            - 'null'
+    required:
+    - kind
+    - url
+  - type: object
+    properties:
+      kind:
+        type: string
+        const: geo
+      lat:
+        type: number
+      lng:
+        type: number
+      radius_m:
+        type:
+        - number
+        - 'null'
+    required:
+    - kind
+    - lat
+    - lng
+  - type: object
+    properties:
+      kind:
+        type: string
+        const: interval
+      start:
+        $ref: '#/Timestamp'
+      end:
+        oneOf:
+        - $ref: '#/Timestamp'
+        - type: 'null'
+    required:
+    - kind
+    - start
+  - type: object
+    properties:
+      kind:
+        type: string
+        const: entity_ref
+      entity_type:
+        type: string
+        enum:
+        - person
+        - organization
+        - device
+        - species
+        - concept
+      external_ids:
+        type: object
+        additionalProperties:
+          type: string
+    required:
+    - kind
+    - entity_type
+  - type: object
+    properties:
+      kind:
+        type: string
+        const: object_ref
+      object_class:
+        type: string
+        enum:
+        - vehicle
+        - artifact
+        - tool
+        - asset
+      serial_number:
+        type:
+        - string
+        - 'null'
+      tag_code:
+        type:
+        - string
+        - 'null'
+    required:
+    - kind
+    - object_class
+  - type: object
+    properties:
+      kind:
+        type: string
+        const: composite
+      parts:
+        type: array
+        items:
+          oneOf:
+          - $ref: '#/ObjectRef'
+          - type: object
+            additionalProperties: true
+    required:
+    - kind
+    - parts
+  - type: object
+    properties:
+      kind:
+        type: string
+        const: quote_anchor
+      quote:
+        type: string
+    required:
+    - kind
+    - quote
+Target:
+  allOf:
+  - $ref: '#/DomainEnvelope'
+  - type: object
+    properties:
+      object_kind:
+        type: string
+        const: target
+      object_type:
+        type: string
+      data:
+        type: object
+        properties:
+          target_type:
+            type: string
+            enum:
+            - digital_resource
+            - spatial
+            - temporal
+            - named_entity
+            - abstract_logical
+            - object_memory
+            - composite
+          label:
+            type: string
+          summary:
+            type:
+            - string
+            - 'null'
+          addresses:
+            type: array
+            items:
+              $ref: '#/TargetAddress'
+          aliases:
+            type: array
+            items:
+              type: string
+          metadata:
+            type: object
+            additionalProperties: true
+          domain_pack:
+            type:
+            - string
+            - 'null'
+          provenance:
+            $ref: '#/Provenance'
+          visibility:
+            $ref: '#/Visibility'
+          trust:
+            $ref: '#/TrustState'
+          relationships:
+            type: array
+            items:
+              $ref: '#/Id'
+        required:
+        - target_type
+        - label
+        - addresses
+CreateTargetRequest:
+  allOf:
+  - $ref: '#/MutationMeta'
+  - type: object
+    properties:
+      target_type:
+        type: string
+        enum:
+        - digital_resource
+        - spatial
+        - temporal
+        - named_entity
+        - abstract_logical
+        - object_memory
+        - composite
+      label:
+        type: string
+      summary:
+        type: string
+      addresses:
+        type: array
+        items:
+          $ref: '#/TargetAddress'
+      context:
+        type: object
+        additionalProperties: true
+      provenance:
+        $ref: '#/Provenance'
+    required:
+    - target_type
+    - label
+    - addresses
+ResolveTargetRequest:
+  allOf:
+  - $ref: '#/MutationMeta'
+  - type: object
+    properties:
+      target_type:
+        type: string
+        enum:
+        - digital_resource
+        - spatial
+        - temporal
+        - named_entity
+        - abstract_logical
+        - object_memory
+        - composite
+      addresses:
+        type: array
+        items:
+          $ref: '#/TargetAddress'
+      dedupe_mode:
+        type: string
+        enum:
+        - strict
+        - fuzzy
+        - upsert
+    required:
+    - target_type
+    - addresses
+    - dedupe_mode
+ResolveTargetResponse:
+  type: object
+  properties:
+    target_id:
+      $ref: '#/Id'
+    status:
+      type: string
+      enum:
+      - matched
+      - created
+      - merged
+  required:
+  - target_id
+  - status
+BulkResolveTargetRequest:
+  allOf:
+  - $ref: '#/MutationMeta'
+  - type: object
+    properties:
+      operations:
+        type: array
+        items:
+          $ref: '#/ResolveTargetRequest'
+        minItems: 1
+    required:
+    - operations
+BulkResolveTargetResponse:
+  type: object
+  properties:
+    results:
+      type: array
+      items:
+        $ref: '#/ResolveTargetResponse'
+  required:
+  - results
+TargetMergeRequest:
+  allOf:
+  - $ref: '#/MutationMeta'
+  - type: object
+    properties:
+      source_target_ids:
+        type: array
+        items:
+          $ref: '#/Id'
+        minItems: 1
+      strategy:
+        type: string
+        enum:
+        - merge_into_current
+        - merge_current_into_other
+    required:
+    - source_target_ids
+    - strategy
+TargetAliasRequest:
+  allOf:
+  - $ref: '#/MutationMeta'
+  - type: object
+    properties:
+      alias:
+        type: string
+    required:
+    - alias
+TargetSupersedeRequest:
+  allOf:
+  - $ref: '#/MutationMeta'
+  - type: object
+    properties:
+      replacement_target_id:
+        $ref: '#/Id'
+    required:
+    - replacement_target_id
+EntryBlock:
+  oneOf:
+  - type: object
+    properties:
+      block_type:
+        type: string
+        const: paragraph
+      text:
+        type: string
+    required:
+    - block_type
+    - text
+  - type: object
+    properties:
+      block_type:
+        type: string
+        const: quote
+      text:
+        type: string
+      source_ref:
+        $ref: '#/Id'
+    required:
+    - block_type
+    - text
+  - type: object
+    properties:
+      block_type:
+        type: string
+        const: citation
+      citation_style:
+        type: string
+        enum:
+        - url
+        - manual
+        - doi
+      source_ref:
+        $ref: '#/Id'
+    required:
+    - block_type
+    - citation_style
+    - source_ref
+  - type: object
+    properties:
+      block_type:
+        type: string
+        const: claim
+      text:
+        type: string
+      confidence:
+        type: string
+        enum:
+        - low
+        - medium
+        - high
+    required:
+    - block_type
+    - text
+  - type: object
+    properties:
+      block_type:
+        type: string
+        const: checklist
+      items:
+        type: array
+        items:
+          type: object
+          properties:
+            label:
+              type: string
+            checked:
+              type: boolean
+          required:
+          - label
+          - checked
+    required:
+    - block_type
+    - items
+  - type: object
+    properties:
+      block_type:
+        type: string
+        const: media_ref
+      media_id:
+        $ref: '#/Id'
+    required:
+    - block_type
+    - media_id
+  - type: object
+    properties:
+      block_type:
+        type: string
+        const: location
+      lat:
+        type: number
+      lng:
+        type: number
+    required:
+    - block_type
+    - lat
+    - lng
+  - type: object
+    properties:
+      block_type:
+        type: string
+        const: timeline_event
+      start:
+        $ref: '#/Timestamp'
+      end:
+        oneOf:
+        - $ref: '#/Timestamp'
+        - type: 'null'
+    required:
+    - block_type
+    - start
+  - type: object
+    properties:
+      block_type:
+        type: string
+        const: structured_fields
+      fields:
+        type: object
+        additionalProperties: true
+    required:
+    - block_type
+    - fields
+  - type: object
+    properties:
+      block_type:
+        type: string
+        const: ai_suggestion
+      status:
+        type: string
+        enum:
+        - suggested
+        - accepted
+        - rejected
+      why:
+        type: string
+    required:
+    - block_type
+    - status
+EntryBody:
+  type: object
+  properties:
+    blocks:
+      type: array
+      items:
+        $ref: '#/EntryBlock'
+  required:
+  - blocks
+Entry:
+  allOf:
+  - $ref: '#/DomainEnvelope'
+  - type: object
+    properties:
+      object_kind:
+        type: string
+        const: entry
+      data:
+        type: object
+        properties:
+          entry_type:
+            type: string
+            enum:
+            - annotation
+            - citation
+            - evidence
+            - classification
+            - conversation
+            - workflow
+            - collection_curation
+            - media
+            - assertion
+          intent:
+            type: string
+            enum:
+            - informational
+            - evaluative
+            - evidentiary
+            - conversational
+            - organizational
+            - operational
+            - observational
+            - referential
+            - corrective
+            - personal_mnemonic
+          target_ids:
+            type: array
+            items:
+              $ref: '#/Id'
+          title:
+            type:
+            - string
+            - 'null'
+          body:
+            $ref: '#/EntryBody'
+          modalities:
+            type: array
+            items:
+              type: string
+              enum:
+              - textual
+              - media
+              - structured
+          source_ids:
+            type: array
+            items:
+              $ref: '#/Id'
+          relationship_ids:
+            type: array
+            items:
+              $ref: '#/Id'
+          collection_ids:
+            type: array
+            items:
+              $ref: '#/Id'
+          workflow:
+            $ref: '#/WorkflowState'
+          visibility:
+            $ref: '#/Visibility'
+          trust:
+            $ref: '#/TrustState'
+          provenance:
+            $ref: '#/Provenance'
+          authorship:
+            type: object
+            additionalProperties: true
+          context:
+            type: object
+            additionalProperties: true
+          comment_count:
+            type: integer
+            minimum: 0
+        required:
+        - entry_type
+        - intent
+        - target_ids
+        - body
+CreateEntryRequest:
+  allOf:
+  - $ref: '#/MutationMeta'
+  - type: object
+    properties:
+      entry_type:
+        type: string
+        enum:
+        - annotation
+        - citation
+        - evidence
+        - classification
+        - conversation
+        - workflow
+        - collection_curation
+        - media
+        - assertion
+      intent:
+        type: string
+        enum:
+        - informational
+        - evaluative
+        - evidentiary
+        - conversational
+        - organizational
+        - operational
+        - observational
+        - referential
+        - corrective
+        - personal_mnemonic
+      target_ids:
+        type: array
+        items:
+          $ref: '#/Id'
+        minItems: 1
+      title:
+        type: string
+      body:
+        $ref: '#/EntryBody'
+      modalities:
+        type: array
+        items:
+          type: string
+          enum:
+          - textual
+          - media
+          - structured
+      context:
+        type: object
+        additionalProperties: true
+      workflow:
+        $ref: '#/WorkflowState'
+      visibility:
+        $ref: '#/Visibility'
+      trust:
+        $ref: '#/TrustState'
+      provenance:
+        $ref: '#/Provenance'
+    required:
+    - entry_type
+    - intent
+    - target_ids
+    - body
+UpdateEntryRequest:
+  allOf:
+  - $ref: '#/MutationMeta'
+  - type: object
+    properties:
+      title:
+        type: string
+      body:
+        $ref: '#/EntryBody'
+      modalities:
+        type: array
+        items:
+          type: string
+          enum:
+          - textual
+          - media
+          - structured
+      context:
+        type: object
+        additionalProperties: true
+      workflow:
+        $ref: '#/WorkflowState'
+      visibility:
+        $ref: '#/Visibility'
+      trust:
+        $ref: '#/TrustState'
+      provenance:
+        $ref: '#/Provenance'
+CloneEntryRequest:
+  allOf:
+  - $ref: '#/MutationMeta'
+  - type: object
+    properties:
+      target_collection_id:
+        oneOf:
+        - $ref: '#/Id'
+        - type: 'null'
+ConvertEntryRequest:
+  allOf:
+  - $ref: '#/MutationMeta'
+  - type: object
+    properties:
+      new_entry_type:
+        type: string
+        enum:
+        - annotation
+        - citation
+        - evidence
+        - classification
+        - conversation
+        - workflow
+        - collection_curation
+        - media
+        - assertion
+      preserve_history:
+        type: boolean
+    required:
+    - new_entry_type
+AutosaveEntryRequest:
+  allOf:
+  - $ref: '#/MutationMeta'
+  - type: object
+    properties:
+      body:
+        $ref: '#/EntryBody'
+      title:
+        type: string
+ReviewSubmitRequest:
+  allOf:
+  - $ref: '#/MutationMeta'
+  - type: object
+    properties:
+      note:
+        type: string
+PublishEntryRequest:
+  allOf:
+  - $ref: '#/MutationMeta'
+  - type: object
+    properties:
+      audience:
+        type: string
+        enum:
+        - public
+        - link_shared
+        - group
+      slug:
+        type:
+        - string
+        - 'null'
+    required:
+    - audience
+ArchiveEntryRequest:
+  allOf:
+  - $ref: '#/MutationMeta'
+  - type: object
+    properties:
+      reason:
+        type: string
+RevisionRecord:
+  type: object
+  properties:
+    revision:
+      type: integer
+    updated_at:
+      $ref: '#/Timestamp'
+    updated_by:
+      $ref: '#/ActorIdentity'
+    summary:
+      type: string
+  required:
+  - revision
+  - updated_at
+  - updated_by
+HistoryResponse:
+  type: object
+  properties:
+    history:
+      type: array
+      items:
+        $ref: '#/RevisionRecord'
+  required:
+  - history
+Comment:
+  allOf:
+  - $ref: '#/DomainEnvelope'
+  - type: object
+    properties:
+      object_kind:
+        type: string
+        const: comment
+      data:
+        type: object
+        properties:
+          parent_ref:
+            $ref: '#/ObjectRef'
+          thread_root_id:
+            oneOf:
+            - $ref: '#/Id'
+            - type: 'null'
+          body:
+            $ref: '#/EntryBody'
+          visibility:
+            $ref: '#/Visibility'
+        required:
+        - parent_ref
+        - body
+CreateCommentRequest:
+  allOf:
+  - $ref: '#/MutationMeta'
+  - type: object
+    properties:
+      parent_ref:
+        $ref: '#/ObjectRef'
+      thread_root_id:
+        oneOf:
+        - $ref: '#/Id'
+        - type: 'null'
+      body:
+        $ref: '#/EntryBody'
+      visibility:
+        $ref: '#/Visibility'
+    required:
+    - parent_ref
+    - body
+UpdateCommentRequest:
+  allOf:
+  - $ref: '#/MutationMeta'
+  - type: object
+    properties:
+      body:
+        $ref: '#/EntryBody'
+      visibility:
+        $ref: '#/Visibility'
+BrowserCaptureRequest:
+  allOf:
+  - $ref: '#/MutationMeta'
+  - type: object
+    properties:
+      url:
+        type: string
+        format: uri
+      page_title:
+        type: string
+      selection:
+        type: object
+        properties:
+          quote:
+            type: string
+          dom_selector:
+            type:
+            - string
+            - 'null'
+          text_position:
+            type: object
+            properties:
+              start:
+                type: integer
+              end:
+                type: integer
+      media_ids:
+        type: array
+        items:
+          $ref: '#/Id'
+      intent_hint:
+        type:
+        - string
+        - 'null'
+        enum:
+        - informational
+        - evaluative
+        - evidentiary
+        - conversational
+        - organizational
+        - operational
+        - observational
+        - referential
+        - corrective
+        - personal_mnemonic
+        - null
+      collection_id:
+        oneOf:
+        - $ref: '#/Id'
+        - type: 'null'
+    required:
+    - url
+MobileCaptureRequest:
+  allOf:
+  - $ref: '#/MutationMeta'
+  - type: object
+    properties:
+      lat:
+        type: number
+      lng:
+        type: number
+      accuracy_m:
+        type:
+        - number
+        - 'null'
+      media_ids:
+        type: array
+        items:
+          $ref: '#/Id'
+      note:
+        type: string
+      collection_id:
+        oneOf:
+        - $ref: '#/Id'
+        - type: 'null'
+    required:
+    - lat
+    - lng
+ImportCaptureRequest:
+  allOf:
+  - $ref: '#/MutationMeta'
+  - type: object
+    properties:
+      import_type:
+        type: string
+        enum:
+        - url
+        - document
+        - csv
+        - json
+        - image
+        - audio
+        - video
+      source_locator:
+        type: object
+        additionalProperties: true
+      collection_id:
+        oneOf:
+        - $ref: '#/Id'
+        - type: 'null'
+    required:
+    - import_type
+    - source_locator
+VoiceCaptureRequest:
+  allOf:
+  - $ref: '#/MutationMeta'
+  - type: object
+    properties:
+      media_id:
+        $ref: '#/Id'
+      transcript:
+        type: string
+      lat:
+        type:
+        - number
+        - 'null'
+      lng:
+        type:
+        - number
+        - 'null'
+      collection_id:
+        oneOf:
+        - $ref: '#/Id'
+        - type: 'null'
+    required:
+    - media_id
+ObjectScanCaptureRequest:
+  allOf:
+  - $ref: '#/MutationMeta'
+  - type: object
+    properties:
+      object_class:
+        type: string
+      scan_payload:
+        type: object
+        additionalProperties: true
+      media_ids:
+        type: array
+        items:
+          $ref: '#/Id'
+      collection_id:
+        oneOf:
+        - $ref: '#/Id'
+        - type: 'null'
+    required:
+    - object_class
+    - scan_payload
+ARCaptureRequest:
+  allOf:
+  - $ref: '#/MutationMeta'
+  - type: object
+    properties:
+      anchor:
+        type: object
+        additionalProperties: true
+      content:
+        type: object
+        additionalProperties: true
+      collection_id:
+        oneOf:
+        - $ref: '#/Id'
+        - type: 'null'
+    required:
+    - anchor
+    - content
+CaptureResponse:
+  type: object
+  properties:
+    target:
+      $ref: '#/Target'
+    draft_entry:
+      $ref: '#/Entry'
+    suggestions:
+      type: array
+      items:
+        $ref: '#/Suggestion'
+  required:
+  - target
+  - draft_entry
+  - suggestions
+Source:
+  allOf:
+  - $ref: '#/DomainEnvelope'
+  - type: object
+    properties:
+      object_kind:
+        type: string
+        const: source
+      data:
+        type: object
+        properties:
+          source_type:
+            type: string
+            enum:
+            - url
+            - document
+            - image
+            - audio
+            - video
+            - manual_note
+            - sensor_trace
+            - imported_record
+          label:
+            type: string
+          locator:
+            type: object
+            additionalProperties: true
+          excerpt:
+            type:
+            - string
+            - 'null'
+          metadata:
+            type: object
+            additionalProperties: true
+          provenance:
+            $ref: '#/Provenance'
+          integrity:
+            type: object
+            additionalProperties: true
+        required:
+        - source_type
+        - label
+        - locator
+CreateSourceRequest:
+  allOf:
+  - $ref: '#/MutationMeta'
+  - type: object
+    properties:
+      source_type:
+        type: string
+        enum:
+        - url
+        - document
+        - image
+        - audio
+        - video
+        - manual_note
+        - sensor_trace
+        - imported_record
+      label:
+        type: string
+      locator:
+        type: object
+        additionalProperties: true
+      excerpt:
+        type: string
+      metadata:
+        type: object
+        additionalProperties: true
+      provenance:
+        $ref: '#/Provenance'
+      integrity:
+        type: object
+        additionalProperties: true
+    required:
+    - source_type
+    - label
+    - locator
+UpdateSourceRequest:
+  allOf:
+  - $ref: '#/MutationMeta'
+  - type: object
+    properties:
+      label:
+        type: string
+      locator:
+        type: object
+        additionalProperties: true
+      excerpt:
+        type: string
+      metadata:
+        type: object
+        additionalProperties: true
+      provenance:
+        $ref: '#/Provenance'
+      integrity:
+        type: object
+        additionalProperties: true
+EvidencePacket:
+  allOf:
+  - $ref: '#/DomainEnvelope'
+  - type: object
+    properties:
+      object_kind:
+        type: string
+        const: evidence_packet
+      data:
+        type: object
+        properties:
+          label:
+            type: string
+          source_ids:
+            type: array
+            items:
+              $ref: '#/Id'
+          entry_ids:
+            type: array
+            items:
+              $ref: '#/Id'
+          ordering:
+            type: array
+            items:
+              type: object
+              properties:
+                ref:
+                  $ref: '#/Id'
+                position:
+                  type: integer
+              required:
+              - ref
+              - position
+          summary:
+            type:
+            - string
+            - 'null'
+        required:
+        - label
+CreateEvidencePacketRequest:
+  allOf:
+  - $ref: '#/MutationMeta'
+  - type: object
+    properties:
+      label:
+        type: string
+      source_ids:
+        type: array
+        items:
+          $ref: '#/Id'
+      entry_ids:
+        type: array
+        items:
+          $ref: '#/Id'
+      ordering:
+        type: array
+        items:
+          type: object
+          properties:
+            ref:
+              $ref: '#/Id'
+            position:
+              type: integer
+          required:
+          - ref
+          - position
+      summary:
+        type: string
+    required:
+    - label
+UpdateEvidencePacketRequest:
+  allOf:
+  - $ref: '#/MutationMeta'
+  - type: object
+    properties:
+      label:
+        type: string
+      source_ids:
+        type: array
+        items:
+          $ref: '#/Id'
+      entry_ids:
+        type: array
+        items:
+          $ref: '#/Id'
+      ordering:
+        type: array
+        items:
+          type: object
+          properties:
+            ref:
+              $ref: '#/Id'
+            position:
+              type: integer
+          required:
+          - ref
+          - position
+      summary:
+        type: string
+CreateEvidenceChainRequest:
+  allOf:
+  - $ref: '#/MutationMeta'
+  - type: object
+    properties:
+      label:
+        type: string
+      links:
+        type: array
+        items:
+          type: object
+          properties:
+            source_id:
+              oneOf:
+              - $ref: '#/Id'
+              - type: 'null'
+            entry_id:
+              oneOf:
+              - $ref: '#/Id'
+              - type: 'null'
+            relationship_type:
+              type: string
+          required:
+          - relationship_type
+    required:
+    - label
+    - links
+AssertionSupportRequest:
+  allOf:
+  - $ref: '#/MutationMeta'
+  - type: object
+    properties:
+      source_id:
+        $ref: '#/Id'
+      relationship_type:
+        type: string
+        enum:
+        - supports
+        - contradicts
+        - attributes
+        - derives_from
+      note:
+        type: string
+    required:
+    - source_id
+    - relationship_type
+Relationship:
+  allOf:
+  - $ref: '#/DomainEnvelope'
+  - type: object
+    properties:
+      object_kind:
+        type: string
+        const: relationship
+      data:
+        type: object
+        properties:
+          relationship_family:
+            type: string
+            enum:
+            - entry_target
+            - entry_entry
+            - target_target
+            - source_claim
+            - collection_membership
+            - supersession_revision
+          relationship_type:
+            type: string
+            enum:
+            - supports
+            - contradicts
+            - replies_to
+            - amends
+            - duplicates
+            - contains
+            - belongs_to
+            - about
+            - derived_from
+            - supersedes
+          subject_ref:
+            $ref: '#/ObjectRef'
+          object_ref:
+            $ref: '#/ObjectRef'
+          note:
+            type:
+            - string
+            - 'null'
+          weight:
+            type: number
+          confidence:
+            type:
+            - string
+            - 'null'
+            enum:
+            - low
+            - medium
+            - high
+            - null
+          provenance:
+            $ref: '#/Provenance'
+        required:
+        - relationship_family
+        - relationship_type
+        - subject_ref
+        - object_ref
+CreateRelationshipRequest:
+  allOf:
+  - $ref: '#/MutationMeta'
+  - type: object
+    properties:
+      relationship_family:
+        type: string
+        enum:
+        - entry_target
+        - entry_entry
+        - target_target
+        - source_claim
+        - collection_membership
+        - supersession_revision
+      relationship_type:
+        type: string
+        enum:
+        - supports
+        - contradicts
+        - replies_to
+        - amends
+        - duplicates
+        - contains
+        - belongs_to
+        - about
+        - derived_from
+        - supersedes
+      subject_ref:
+        $ref: '#/ObjectRef'
+      object_ref:
+        $ref: '#/ObjectRef'
+      note:
+        type: string
+      weight:
+        type: number
+      confidence:
+        type: string
+        enum:
+        - low
+        - medium
+        - high
+      provenance:
+        $ref: '#/Provenance'
+    required:
+    - relationship_family
+    - relationship_type
+    - subject_ref
+    - object_ref
+UpdateRelationshipRequest:
+  allOf:
+  - $ref: '#/MutationMeta'
+  - type: object
+    properties:
+      note:
+        type: string
+      weight:
+        type: number
+      confidence:
+        type: string
+        enum:
+        - low
+        - medium
+        - high
+      provenance:
+        $ref: '#/Provenance'
+BulkRelationshipRequest:
+  allOf:
+  - $ref: '#/MutationMeta'
+  - type: object
+    properties:
+      operations:
+        type: array
+        items:
+          type: object
+          properties:
+            op:
+              type: string
+              enum:
+              - create
+              - update
+              - delete
+            relationship_id:
+              type: string
+            payload:
+              $ref: '#/CreateRelationshipRequest'
+          required:
+          - op
+    required:
+    - operations
+Collection:
+  allOf:
+  - $ref: '#/DomainEnvelope'
+  - type: object
+    properties:
+      object_kind:
+        type: string
+        const: collection
+      data:
+        type: object
+        properties:
+          collection_type:
+            type: string
+            enum:
+            - notebook
+            - case_file
+            - dossier
+            - review_queue
+            - map_layer
+            - timeline_set
+            - board
+            - gallery
+            - route_trail
+            - domain_library
+            - public_layer
+            - object_fleet
+            - live_room
+          name:
+            type: string
+          description:
+            type:
+            - string
+            - 'null'
+          domain_pack:
+            type:
+            - string
+            - 'null'
+          ordering_mode:
+            type: string
+            enum:
+            - manual
+            - chronological
+            - spatial
+            - priority
+            - graph
+            - custom
+          visibility:
+            $ref: '#/Visibility'
+          workflow:
+            $ref: '#/WorkflowState'
+          view_defaults:
+            type: object
+            additionalProperties: true
+          member_counts:
+            type: object
+            properties:
+              targets:
+                type: integer
+              entries:
+                type: integer
+        required:
+        - collection_type
+        - name
+CreateCollectionRequest:
+  allOf:
+  - $ref: '#/MutationMeta'
+  - type: object
+    properties:
+      collection_type:
+        type: string
+        enum:
+        - notebook
+        - case_file
+        - dossier
+        - review_queue
+        - map_layer
+        - timeline_set
+        - board
+        - gallery
+        - route_trail
+        - domain_library
+        - public_layer
+        - object_fleet
+        - live_room
+      name:
+        type: string
+      description:
+        type: string
+      domain_pack:
+        type: string
+      ordering_mode:
+        type: string
+        enum:
+        - manual
+        - chronological
+        - spatial
+        - priority
+        - graph
+        - custom
+      visibility:
+        $ref: '#/Visibility'
+      workflow:
+        $ref: '#/WorkflowState'
+      view_defaults:
+        type: object
+        additionalProperties: true
+    required:
+    - collection_type
+    - name
+UpdateCollectionRequest:
+  allOf:
+  - $ref: '#/MutationMeta'
+  - type: object
+    properties:
+      name:
+        type: string
+      description:
+        type: string
+      domain_pack:
+        type: string
+      ordering_mode:
+        type: string
+        enum:
+        - manual
+        - chronological
+        - spatial
+        - priority
+        - graph
+        - custom
+      visibility:
+        $ref: '#/Visibility'
+      workflow:
+        $ref: '#/WorkflowState'
+      view_defaults:
+        type: object
+        additionalProperties: true
+CollectionMemberRequest:
+  allOf:
+  - $ref: '#/MutationMeta'
+  - type: object
+    properties:
+      members:
+        type: array
+        items:
+          $ref: '#/ObjectRef'
+        minItems: 1
+      membership_type:
+        type: string
+        enum:
+        - contains
+        - references
+        - queues
+        - highlights
+        - supports_packet
+      ordering_position:
+        type: integer
+    required:
+    - members
+    - membership_type
+CollectionOrderingRequest:
+  allOf:
+  - $ref: '#/MutationMeta'
+  - type: object
+    properties:
+      ordering:
+        type: array
+        items:
+          type: object
+          properties:
+            member_ref:
+              $ref: '#/ObjectRef'
+            position:
+              type: integer
+          required:
+          - member_ref
+          - position
+    required:
+    - ordering
+Lens:
+  allOf:
+  - $ref: '#/DomainEnvelope'
+  - type: object
+    properties:
+      object_kind:
+        type: string
+        const: lens
+      data:
+        type: object
+        properties:
+          name:
+            type: string
+          scope_ref:
+            $ref: '#/ObjectRef'
+          filters:
+            type: object
+            additionalProperties: true
+          sort:
+            type: object
+            additionalProperties: true
+          view_type:
+            type: string
+            enum:
+            - list
+            - card
+            - board
+            - timeline
+            - map
+            - graph
+            - queue
+            - compare
+            - gallery
+            - dossier
+          presentation:
+            type: object
+            additionalProperties: true
+        required:
+        - name
+        - scope_ref
+        - view_type
+CreateLensRequest:
+  allOf:
+  - $ref: '#/MutationMeta'
+  - type: object
+    properties:
+      name:
+        type: string
+      scope_ref:
+        $ref: '#/ObjectRef'
+      filters:
+        type: object
+        additionalProperties: true
+      sort:
+        type: object
+        additionalProperties: true
+      view_type:
+        type: string
+        enum:
+        - list
+        - card
+        - board
+        - timeline
+        - map
+        - graph
+        - queue
+        - compare
+        - gallery
+        - dossier
+      presentation:
+        type: object
+        additionalProperties: true
+    required:
+    - name
+    - scope_ref
+    - view_type
+UpdateLensRequest:
+  allOf:
+  - $ref: '#/MutationMeta'
+  - type: object
+    properties:
+      name:
+        type: string
+      filters:
+        type: object
+        additionalProperties: true
+      sort:
+        type: object
+        additionalProperties: true
+      view_type:
+        type: string
+        enum:
+        - list
+        - card
+        - board
+        - timeline
+        - map
+        - graph
+        - queue
+        - compare
+        - gallery
+        - dossier
+      presentation:
+        type: object
+        additionalProperties: true
+ViewQueryRequest:
+  allOf:
+  - $ref: '#/MutationMeta'
+  - type: object
+    properties:
+      scope_ref:
+        $ref: '#/ObjectRef'
+      view_type:
+        type: string
+        enum:
+        - list
+        - card
+        - board
+        - timeline
+        - map
+        - graph
+        - queue
+        - compare
+        - gallery
+        - dossier
+      filters:
+        type: object
+        additionalProperties: true
+      sort:
+        type: object
+        additionalProperties: true
+      pagination:
+        type: object
+        properties:
+          cursor:
+            type:
+            - string
+            - 'null'
+          limit:
+            type: integer
+            minimum: 1
+            maximum: 500
+    required:
+    - scope_ref
+    - view_type
+ViewQueryResponse:
+  type: object
+  properties:
+    view_type:
+      type: string
+    items:
+      type: array
+      items:
+        type: object
+        additionalProperties: true
+    pagination:
+      $ref: '#/PaginationMeta'
+  required:
+  - view_type
+  - items
+  - pagination
+ReviewActionRequest:
+  allOf:
+  - $ref: '#/MutationMeta'
+  - type: object
+    properties:
+      object_ref:
+        $ref: '#/ObjectRef'
+      action:
+        type: string
+        enum:
+        - submit
+        - start_review
+        - approve
+        - request_changes
+      note:
+        type: string
+      assignee_actor_id:
+        oneOf:
+        - $ref: '#/Id'
+        - type: 'null'
+    required:
+    - object_ref
+    - action
+ModerationActionRequest:
+  allOf:
+  - $ref: '#/MutationMeta'
+  - type: object
+    properties:
+      object_ref:
+        $ref: '#/ObjectRef'
+      action:
+        type: string
+        enum:
+        - flag
+        - restrict
+        - restore
+        - remove
+      reason_code:
+        type: string
+        enum:
+        - policy
+        - abuse
+        - privacy
+        - safety
+      note:
+        type: string
+    required:
+    - object_ref
+    - action
+    - reason_code
+ResolutionActionRequest:
+  allOf:
+  - $ref: '#/MutationMeta'
+  - type: object
+    properties:
+      object_ref:
+        $ref: '#/ObjectRef'
+      action:
+        type: string
+        enum:
+        - resolve
+        - reopen
+        - supersede
+      replacement_ref:
+        oneOf:
+        - $ref: '#/ObjectRef'
+        - type: 'null'
+    required:
+    - object_ref
+    - action
+PublicationActionRequest:
+  allOf:
+  - $ref: '#/MutationMeta'
+  - type: object
+    properties:
+      object_ref:
+        $ref: '#/ObjectRef'
+      action:
+        type: string
+        enum:
+        - stage
+        - publish
+        - embed
+        - archive
+      audience:
+        type: string
+        enum:
+        - public
+        - link_shared
+        - group
+      slug:
+        type:
+        - string
+        - 'null'
+    required:
+    - object_ref
+    - action
+RoutingActionRequest:
+  allOf:
+  - $ref: '#/MutationMeta'
+  - type: object
+    properties:
+      object_ref:
+        $ref: '#/ObjectRef'
+      action:
+        type: string
+        enum:
+        - assign
+        - move_queue
+        - unassign
+      queue_id:
+        oneOf:
+        - $ref: '#/Id'
+        - type: 'null'
+      assignee_actor_id:
+        oneOf:
+        - $ref: '#/Id'
+        - type: 'null'
+    required:
+    - object_ref
+    - action
+ActionResult:
+  type: object
+  properties:
+    status:
+      type: string
+      enum:
+      - ok
+      - queued
+      - noop
+    object_ref:
+      $ref: '#/ObjectRef'
+    message:
+      type: string
+  required:
+  - status
+  - object_ref
+VisibilityUpdateRequest:
+  allOf:
+  - $ref: '#/MutationMeta'
+  - type: object
+    properties:
+      visibility_class:
+        type: string
+        enum:
+        - private
+        - workspace
+        - restricted_group
+        - review_only
+        - link_shared
+        - public
+        - layer_specific
+      audience_group_ids:
+        type: array
+        items:
+          $ref: '#/Id'
+      inheritance_mode:
+        type: string
+        enum:
+        - local
+        - inherited
+        - overridden
+    required:
+    - visibility_class
+EffectivePermissionsResponse:
+  type: object
+  properties:
+    object_ref:
+      $ref: '#/ObjectRef'
+    allowed:
+      type: array
+      items:
+        type: string
+    denied:
+      type: array
+      items:
+        type: string
+    explanation:
+      type: array
+      items:
+        type: object
+        properties:
+          permission:
+            type: string
+          result:
+            type: string
+            enum:
+            - allow
+            - deny
+          source:
+            type: string
+          scope:
+            type: string
+        required:
+        - permission
+        - result
+        - source
+  required:
+  - object_ref
+  - allowed
+  - denied
+  - explanation
+CreateShareRequest:
+  allOf:
+  - $ref: '#/MutationMeta'
+  - type: object
+    properties:
+      object_ref:
+        $ref: '#/ObjectRef'
+      share_type:
+        type: string
+        enum:
+        - link
+        - token
+        - group
+      expires_at:
+        oneOf:
+        - $ref: '#/Timestamp'
+        - type: 'null'
+      audience_group_ids:
+        type: array
+        items:
+          $ref: '#/Id'
+    required:
+    - object_ref
+    - share_type
+Share:
+  type: object
+  properties:
+    share_id:
+      $ref: '#/Id'
+    object_ref:
+      $ref: '#/ObjectRef'
+    share_type:
+      type: string
+    url:
+      type:
+      - string
+      - 'null'
+      format: uri
+    token:
+      type:
+      - string
+      - 'null'
+    expires_at:
+      oneOf:
+      - $ref: '#/Timestamp'
+      - type: 'null'
+  required:
+  - share_id
+  - object_ref
+  - share_type
+ProvenanceResponse:
+  type: object
+  properties:
+    object_ref:
+      $ref: '#/ObjectRef'
+    provenance:
+      $ref: '#/Provenance'
+  required:
+  - object_ref
+  - provenance
+TrustUpdateRequest:
+  allOf:
+  - $ref: '#/MutationMeta'
+  - type: object
+    properties:
+      confidence:
+        type: string
+        enum:
+        - low
+        - medium
+        - high
+      verification:
+        type: string
+        enum:
+        - unverified
+        - under_review
+        - verified
+        - rejected
+      dispute:
+        type: string
+        enum:
+        - none
+        - contested
+        - disputed
+      quality:
+        type: string
+        enum:
+        - rough
+        - usable
+        - polished
+      sensitivity:
+        type: string
+        enum:
+        - normal
+        - sensitive
+        - restricted
+DomainPack:
+  type: object
+  properties:
+    domain_pack_id:
+      $ref: '#/Id'
+    slug:
+      type: string
+    label:
+      type: string
+    default_views:
+      type: array
+      items:
+        type: string
+    preferred_entry_types:
+      type: array
+      items:
+        type: string
+    preferred_target_types:
+      type: array
+      items:
+        type: string
+    template_defaults:
+      type: object
+      additionalProperties: true
+    vocabulary_bindings:
+      type: array
+      items:
+        type: string
+    automation_preferences:
+      type: object
+      additionalProperties: true
+    ui_emphasis_rules:
+      type: object
+      additionalProperties: true
+  required:
+  - domain_pack_id
+  - slug
+  - label
+Template:
+  allOf:
+  - $ref: '#/DomainEnvelope'
+  - type: object
+    properties:
+      object_kind:
+        type: string
+        const: template
+      data:
+        type: object
+        properties:
+          name:
+            type: string
+          scope:
+            type: string
+            enum:
+            - user
+            - workspace
+            - domain_pack
+            - system
+          entry_type:
+            type: string
+          target_type:
+            type: string
+          default_blocks:
+            type: array
+            items:
+              $ref: '#/EntryBlock'
+          required_fields:
+            type: array
+            items:
+              type: string
+          suggested_visibility:
+            type: string
+        required:
+        - name
+        - scope
+CreateTemplateRequest:
+  allOf:
+  - $ref: '#/MutationMeta'
+  - type: object
+    properties:
+      name:
+        type: string
+      scope:
+        type: string
+        enum:
+        - user
+        - workspace
+        - domain_pack
+        - system
+      entry_type:
+        type: string
+      target_type:
+        type: string
+      default_blocks:
+        type: array
+        items:
+          $ref: '#/EntryBlock'
+      required_fields:
+        type: array
+        items:
+          type: string
+      suggested_visibility:
+        type: string
+    required:
+    - name
+    - scope
+UpdateTemplateRequest:
+  allOf:
+  - $ref: '#/MutationMeta'
+  - type: object
+    properties:
+      name:
+        type: string
+      entry_type:
+        type: string
+      target_type:
+        type: string
+      default_blocks:
+        type: array
+        items:
+          $ref: '#/EntryBlock'
+      required_fields:
+        type: array
+        items:
+          type: string
+      suggested_visibility:
+        type: string
+Vocabulary:
+  allOf:
+  - $ref: '#/DomainEnvelope'
+  - type: object
+    properties:
+      object_kind:
+        type: string
+        const: vocabulary
+      data:
+        type: object
+        properties:
+          name:
+            type: string
+          scope:
+            type: string
+            enum:
+            - user
+            - workspace
+            - domain_pack
+            - system
+          terms:
+            type: array
+            items:
+              type: object
+              properties:
+                term:
+                  type: string
+                label:
+                  type: string
+                description:
+                  type: string
+              required:
+              - term
+        required:
+        - name
+        - scope
+CreateVocabularyRequest:
+  allOf:
+  - $ref: '#/MutationMeta'
+  - type: object
+    properties:
+      name:
+        type: string
+      scope:
+        type: string
+        enum:
+        - user
+        - workspace
+        - domain_pack
+        - system
+      terms:
+        type: array
+        items:
+          type: object
+          properties:
+            term:
+              type: string
+            label:
+              type: string
+            description:
+              type: string
+          required:
+          - term
+    required:
+    - name
+    - scope
+UpdateVocabularyRequest:
+  allOf:
+  - $ref: '#/MutationMeta'
+  - type: object
+    properties:
+      name:
+        type: string
+      terms:
+        type: array
+        items:
+          type: object
+          properties:
+            term:
+              type: string
+            label:
+              type: string
+            description:
+              type: string
+          required:
+          - term
+SchemaProposal:
+  allOf:
+  - $ref: '#/DomainEnvelope'
+  - type: object
+    properties:
+      object_kind:
+        type: string
+        const: schema_proposal
+      data:
+        type: object
+        properties:
+          proposal_type:
+            type: string
+            enum:
+            - new_field
+            - new_label
+            - new_template
+            - new_branch
+            - promote_local_to_shared
+          scope:
+            type: string
+            enum:
+            - workspace
+            - domain_pack
+            - system
+          payload:
+            type: object
+            additionalProperties: true
+          justification:
+            type: string
+          status:
+            type: string
+            enum:
+            - draft
+            - submitted
+            - approved
+            - rejected
+            - promoted
+        required:
+        - proposal_type
+        - scope
+        - payload
+        - justification
+CreateSchemaProposalRequest:
+  allOf:
+  - $ref: '#/MutationMeta'
+  - type: object
+    properties:
+      proposal_type:
+        type: string
+        enum:
+        - new_field
+        - new_label
+        - new_template
+        - new_branch
+        - promote_local_to_shared
+      scope:
+        type: string
+        enum:
+        - workspace
+        - domain_pack
+        - system
+      payload:
+        type: object
+        additionalProperties: true
+      justification:
+        type: string
+    required:
+    - proposal_type
+    - scope
+    - payload
+    - justification
+SchemaProposalReviewRequest:
+  allOf:
+  - $ref: '#/MutationMeta'
+  - type: object
+    properties:
+      decision:
+        type: string
+        enum:
+        - approve
+        - reject
+        - request_changes
+      note:
+        type: string
+    required:
+    - decision
+SchemaProposalPromoteRequest:
+  allOf:
+  - $ref: '#/MutationMeta'
+  - type: object
+    properties:
+      target_scope:
+        type: string
+        enum:
+        - workspace
+        - domain_pack
+        - system
+    required:
+    - target_scope
+Suggestion:
+  type: object
+  properties:
+    suggestion_id:
+      $ref: '#/Id'
+    kind:
+      type: string
+      enum:
+      - intent
+      - target
+      - support
+      - template
+      - taxonomy
+      - privacy
+      - workflow
+    value:
+      type: object
+      additionalProperties: true
+    confidence:
+      type: number
+      minimum: 0
+      maximum: 1
+    why:
+      type: string
+    provenance:
+      type: object
+      additionalProperties: true
+    status:
+      type: string
+      enum:
+      - suggested
+      - accepted
+      - rejected
+  required:
+  - suggestion_id
+  - kind
+  - value
+  - confidence
+  - why
+  - status
+CreateSuggestionRequest:
+  allOf:
+  - $ref: '#/MutationMeta'
+  - type: object
+    properties:
+      context:
+        type: object
+        additionalProperties: true
+      draft_entry:
+        type: object
+        additionalProperties: true
+      target_candidates:
+        type: array
+        items:
+          type: object
+          additionalProperties: true
+      requested_kinds:
+        type: array
+        items:
+          type: string
+          enum:
+          - intent
+          - target
+          - support
+          - template
+          - taxonomy
+          - privacy
+          - workflow
+    required:
+    - context
+    - requested_kinds
+SuggestionResponse:
+  type: object
+  properties:
+    suggestions:
+      type: array
+      items:
+        $ref: '#/Suggestion'
+  required:
+  - suggestions
+SuggestionDecisionRequest:
+  allOf:
+  - $ref: '#/MutationMeta'
+  - type: object
+    properties:
+      reason:
+        type: string
+SearchRequest:
+  allOf:
+  - $ref: '#/MutationMeta'
+  - type: object
+    properties:
+      query:
+        type: string
+      object_kinds:
+        type: array
+        items:
+          type: string
+          enum:
+          - target
+          - entry
+          - collection
+          - source
+          - relationship
+          - publication
+          - overlay
+      filters:
+        type: object
+        additionalProperties: true
+      cursor:
+        type:
+        - string
+        - 'null'
+      limit:
+        type: integer
+        minimum: 1
+        maximum: 500
+    required:
+    - query
+SearchResponse:
+  type: object
+  properties:
+    results:
+      type: array
+      items:
+        type: object
+        additionalProperties: true
+    pagination:
+      $ref: '#/PaginationMeta'
+  required:
+  - results
+  - pagination
+GraphQueryRequest:
+  allOf:
+  - $ref: '#/MutationMeta'
+  - type: object
+    properties:
+      seed_refs:
+        type: array
+        items:
+          $ref: '#/ObjectRef'
+      depth:
+        type: integer
+        minimum: 1
+        maximum: 10
+      filters:
+        type: object
+        additionalProperties: true
+    required:
+    - seed_refs
+GraphQueryResponse:
+  type: object
+  properties:
+    nodes:
+      type: array
+      items:
+        type: object
+        additionalProperties: true
+    edges:
+      type: array
+      items:
+        type: object
+        additionalProperties: true
+  required:
+  - nodes
+  - edges
+MapQueryRequest:
+  allOf:
+  - $ref: '#/MutationMeta'
+  - type: object
+    properties:
+      bbox:
+        type: object
+        properties:
+          min_lat:
+            type: number
+          min_lng:
+            type: number
+          max_lat:
+            type: number
+          max_lng:
+            type: number
+        required:
+        - min_lat
+        - min_lng
+        - max_lat
+        - max_lng
+      filters:
+        type: object
+        additionalProperties: true
+      clustering:
+        type: boolean
+    required:
+    - bbox
+MapQueryResponse:
+  type: object
+  properties:
+    features:
+      type: array
+      items:
+        type: object
+        additionalProperties: true
+  required:
+  - features
+TimelineQueryRequest:
+  allOf:
+  - $ref: '#/MutationMeta'
+  - type: object
+    properties:
+      interval:
+        type: object
+        properties:
+          start:
+            $ref: '#/Timestamp'
+          end:
+            oneOf:
+            - $ref: '#/Timestamp'
+            - type: 'null'
+        required:
+        - start
+      filters:
+        type: object
+        additionalProperties: true
+    required:
+    - interval
+TimelineQueryResponse:
+  type: object
+  properties:
+    events:
+      type: array
+      items:
+        type: object
+        additionalProperties: true
+  required:
+  - events
+CompareQueryRequest:
+  allOf:
+  - $ref: '#/MutationMeta'
+  - type: object
+    properties:
+      refs:
+        type: array
+        items:
+          $ref: '#/ObjectRef'
+        minItems: 2
+      mode:
+        type: string
+        enum:
+        - side_by_side
+        - diff
+        - claim_support
+    required:
+    - refs
+CompareQueryResponse:
+  type: object
+  properties:
+    comparisons:
+      type: array
+      items:
+        type: object
+        additionalProperties: true
+  required:
+  - comparisons
+DossierQueryRequest:
+  allOf:
+  - $ref: '#/MutationMeta'
+  - type: object
+    properties:
+      collection_id:
+        $ref: '#/Id'
+      filters:
+        type: object
+        additionalProperties: true
+    required:
+    - collection_id
+DossierQueryResponse:
+  type: object
+  properties:
+    sections:
+      type: array
+      items:
+        type: object
+        additionalProperties: true
+  required:
+  - sections
+QueueQueryRequest:
+  allOf:
+  - $ref: '#/MutationMeta'
+  - type: object
+    properties:
+      scope_ref:
+        $ref: '#/ObjectRef'
+      filters:
+        type: object
+        additionalProperties: true
+      cursor:
+        type:
+        - string
+        - 'null'
+      limit:
+        type: integer
+        minimum: 1
+        maximum: 500
+    required:
+    - scope_ref
+QueueQueryResponse:
+  type: object
+  properties:
+    items:
+      type: array
+      items:
+        type: object
+        additionalProperties: true
+    pagination:
+      $ref: '#/PaginationMeta'
+  required:
+  - items
+  - pagination
+UploadInitiateRequest:
+  allOf:
+  - $ref: '#/MutationMeta'
+  - type: object
+    properties:
+      filename:
+        type: string
+      mime_type:
+        type: string
+      byte_size:
+        type: integer
+        minimum: 1
+    required:
+    - filename
+    - mime_type
+    - byte_size
+UploadInitiateResponse:
+  type: object
+  properties:
+    upload_id:
+      $ref: '#/Id'
+    upload_url:
+      type: string
+      format: uri
+    media_id:
+      $ref: '#/Id'
+  required:
+  - upload_id
+  - upload_url
+  - media_id
+UploadCompleteRequest:
+  allOf:
+  - $ref: '#/MutationMeta'
+  - type: object
+    properties:
+      upload_id:
+        $ref: '#/Id'
+      checksum:
+        type: string
+    required:
+    - upload_id
+MediaAsset:
+  type: object
+  properties:
+    media_id:
+      $ref: '#/Id'
+    filename:
+      type: string
+    mime_type:
+      type: string
+    byte_size:
+      type: integer
+    url:
+      type:
+      - string
+      - 'null'
+      format: uri
+    status:
+      type: string
+      enum:
+      - uploaded
+      - processing
+      - ready
+      - failed
+    metadata:
+      type: object
+      additionalProperties: true
+  required:
+  - media_id
+  - filename
+  - mime_type
+  - byte_size
+  - status
+UpdateMediaRequest:
+  allOf:
+  - $ref: '#/MutationMeta'
+  - type: object
+    properties:
+      metadata:
+        type: object
+        additionalProperties: true
+      filename:
+        type: string
+AttachMediaRequest:
+  allOf:
+  - $ref: '#/MutationMeta'
+  - type: object
+    properties:
+      object_ref:
+        $ref: '#/ObjectRef'
+      role:
+        type: string
+        enum:
+        - primary
+        - supporting
+        - thumbnail
+        - transcript_source
+    required:
+    - object_ref
+    - role
+TranscribeMediaRequest:
+  allOf:
+  - $ref: '#/MutationMeta'
+  - type: object
+    properties:
+      language_hint:
+        type: string
+DerivativeRequest:
+  allOf:
+  - $ref: '#/MutationMeta'
+  - type: object
+    properties:
+      derivative_kinds:
+        type: array
+        items:
+          type: string
+          enum:
+          - thumbnail
+          - waveform
+          - preview
+          - ocr
+          - embedding
+ActivityEvent:
+  type: object
+  properties:
+    event_id:
+      $ref: '#/Id'
+    type:
+      type: string
+    object_ref:
+      $ref: '#/ObjectRef'
+    actor:
+      $ref: '#/ActorIdentity'
+    created_at:
+      $ref: '#/Timestamp'
+    payload:
+      type: object
+      additionalProperties: true
+  required:
+  - event_id
+  - type
+  - object_ref
+  - created_at
+ActivityResponse:
+  type: object
+  properties:
+    events:
+      type: array
+      items:
+        $ref: '#/ActivityEvent'
+    pagination:
+      $ref: '#/PaginationMeta'
+  required:
+  - events
+  - pagination
+AuditLogResponse:
+  type: object
+  properties:
+    events:
+      type: array
+      items:
+        $ref: '#/ActivityEvent'
+    pagination:
+      $ref: '#/PaginationMeta'
+  required:
+  - events
+  - pagination
+LiveRoom:
+  type: object
+  properties:
+    live_room_id:
+      $ref: '#/Id'
+    name:
+      type: string
+    collection_id:
+      oneOf:
+      - $ref: '#/Id'
+      - type: 'null'
+    presence_count:
+      type: integer
+    status:
+      type: string
+      enum:
+      - open
+      - closed
+  required:
+  - live_room_id
+  - name
+  - presence_count
+  - status
+CreateLiveRoomRequest:
+  allOf:
+  - $ref: '#/MutationMeta'
+  - type: object
+    properties:
+      name:
+        type: string
+      collection_id:
+        oneOf:
+        - $ref: '#/Id'
+        - type: 'null'
+    required:
+    - name
+LiveRoomJoinRequest:
+  allOf:
+  - $ref: '#/MutationMeta'
+  - type: object
+    properties:
+      presence_metadata:
+        type: object
+        additionalProperties: true
+Publication:
+  allOf:
+  - $ref: '#/DomainEnvelope'
+  - type: object
+    properties:
+      object_kind:
+        type: string
+        const: publication
+      data:
+        type: object
+        properties:
+          source_ref:
+            $ref: '#/ObjectRef'
+          presentation_type:
+            type: string
+            enum:
+            - record
+            - collection
+            - overlay
+            - embed
+            - map
+            - timeline
+            - history
+          slug:
+            type: string
+          audience:
+            type: string
+            enum:
+            - public
+            - link_shared
+            - group
+          theme:
+            type: object
+            additionalProperties: true
+          trust_display:
+            type: object
+            properties:
+              show_provenance:
+                type: boolean
+              show_revision_history:
+                type: boolean
+              show_verification:
+                type: boolean
+        required:
+        - source_ref
+        - presentation_type
+        - slug
+        - audience
+CreatePublicationRequest:
+  allOf:
+  - $ref: '#/MutationMeta'
+  - type: object
+    properties:
+      source_ref:
+        $ref: '#/ObjectRef'
+      presentation_type:
+        type: string
+        enum:
+        - record
+        - collection
+        - overlay
+        - embed
+        - map
+        - timeline
+        - history
+      slug:
+        type: string
+      audience:
+        type: string
+        enum:
+        - public
+        - link_shared
+        - group
+      theme:
+        type: object
+        additionalProperties: true
+      trust_display:
+        type: object
+        properties:
+          show_provenance:
+            type: boolean
+          show_revision_history:
+            type: boolean
+          show_verification:
+            type: boolean
+    required:
+    - source_ref
+    - presentation_type
+    - slug
+    - audience
+UpdatePublicationRequest:
+  allOf:
+  - $ref: '#/MutationMeta'
+  - type: object
+    properties:
+      theme:
+        type: object
+        additionalProperties: true
+      trust_display:
+        type: object
+        properties:
+          show_provenance:
+            type: boolean
+          show_revision_history:
+            type: boolean
+          show_verification:
+            type: boolean
+Overlay:
+  allOf:
+  - $ref: '#/DomainEnvelope'
+  - type: object
+    properties:
+      object_kind:
+        type: string
+        const: overlay
+      data:
+        type: object
+        properties:
+          name:
+            type: string
+          scope_ref:
+            oneOf:
+            - $ref: '#/ObjectRef'
+            - type: 'null'
+          density_preferences:
+            type: object
+            additionalProperties: true
+          filters:
+            type: object
+            additionalProperties: true
+        required:
+        - name
+CreateOverlayRequest:
+  allOf:
+  - $ref: '#/MutationMeta'
+  - type: object
+    properties:
+      name:
+        type: string
+      scope_ref:
+        oneOf:
+        - $ref: '#/ObjectRef'
+        - type: 'null'
+      density_preferences:
+        type: object
+        additionalProperties: true
+      filters:
+        type: object
+        additionalProperties: true
+    required:
+    - name
+OverlayQueryResponse:
+  type: object
+  properties:
+    items:
+      type: array
+      items:
+        type: object
+        additionalProperties: true
+  required:
+  - items
+ComposerInitRequest:
+  allOf:
+  - $ref: '#/MutationMeta'
+  - type: object
+    properties:
+      capture_surface:
+        type: string
+        enum:
+        - browser_extension
+        - mobile
+        - manual_drafting
+        - import
+        - voice
+        - scan
+        - ar
+      domain_pack:
+        type:
+        - string
+        - 'null'
+      target_seed:
+        type: object
+        additionalProperties: true
+      collection_id:
+        oneOf:
+        - $ref: '#/Id'
+        - type: 'null'
+    required:
+    - capture_surface
+ComposerInitResponse:
+  type: object
+  properties:
+    draft_entry:
+      $ref: '#/Entry'
+    target_candidates:
+      type: array
+      items:
+        $ref: '#/Target'
+    allowed_entry_types:
+      type: array
+      items:
+        type: string
+    suggested_intent:
+      type:
+      - string
+      - 'null'
+    visible_drawers:
+      type: array
+      items:
+        type: string
+    required_fields:
+      type: array
+      items:
+        type: string
+    effective_permissions:
+      type: array
+      items:
+        type: string
+  required:
+  - draft_entry
+  - target_candidates
+  - allowed_entry_types
+  - visible_drawers
+  - required_fields
+  - effective_permissions
+ComposerValidateRequest:
+  allOf:
+  - $ref: '#/MutationMeta'
+  - type: object
+    properties:
+      draft_entry:
+        type: object
+        additionalProperties: true
+    required:
+    - draft_entry
+ComposerValidateResponse:
+  type: object
+  properties:
+    valid:
+      type: boolean
+    errors:
+      type: array
+      items:
+        type: object
+        properties:
+          path:
+            type: string
+          message:
+            type: string
+        required:
+        - path
+        - message
+  required:
+  - valid
+  - errors
+ComposerCommitRequest:
+  allOf:
+  - $ref: '#/MutationMeta'
+  - type: object
+    properties:
+      draft_entry:
+        type: object
+        additionalProperties: true
+    required:
+    - draft_entry
+BatchReadRequest:
+  allOf:
+  - $ref: '#/MutationMeta'
+  - type: object
+    properties:
+      refs:
+        type: array
+        items:
+          $ref: '#/ObjectRef'
+        minItems: 1
+    required:
+    - refs
+BatchReadResponse:
+  type: object
+  properties:
+    objects:
+      type: array
+      items:
+        type: object
+        additionalProperties: true
+  required:
+  - objects
+BatchPermissionsRequest:
+  allOf:
+  - $ref: '#/MutationMeta'
+  - type: object
+    properties:
+      refs:
+        type: array
+        items:
+          $ref: '#/ObjectRef'
+        minItems: 1
+    required:
+    - refs
+BatchPermissionsResponse:
+  type: object
+  properties:
+    results:
+      type: array
+      items:
+        $ref: '#/EffectivePermissionsResponse'
+  required:
+  - results
+KeyListResponse:
+  type: object
+  properties:
+    items:
+      type: array
+      items:
+        $ref: '#/Key'
+    pagination:
+      $ref: '#/PaginationMeta'
+  required:
+  - items
+  - pagination
+KeychainListResponse:
+  type: object
+  properties:
+    items:
+      type: array
+      items:
+        $ref: '#/Keychain'
+    pagination:
+      $ref: '#/PaginationMeta'
+  required:
+  - items
+  - pagination
+AudienceGroupListResponse:
+  type: object
+  properties:
+    items:
+      type: array
+      items:
+        $ref: '#/AudienceGroup'
+    pagination:
+      $ref: '#/PaginationMeta'
+  required:
+  - items
+  - pagination
+TargetListResponse:
+  type: object
+  properties:
+    items:
+      type: array
+      items:
+        $ref: '#/Target'
+    pagination:
+      $ref: '#/PaginationMeta'
+  required:
+  - items
+  - pagination
+EntryListResponse:
+  type: object
+  properties:
+    items:
+      type: array
+      items:
+        $ref: '#/Entry'
+    pagination:
+      $ref: '#/PaginationMeta'
+  required:
+  - items
+  - pagination
+CommentListResponse:
+  type: object
+  properties:
+    items:
+      type: array
+      items:
+        $ref: '#/Comment'
+    pagination:
+      $ref: '#/PaginationMeta'
+  required:
+  - items
+  - pagination
+SourceListResponse:
+  type: object
+  properties:
+    items:
+      type: array
+      items:
+        $ref: '#/Source'
+    pagination:
+      $ref: '#/PaginationMeta'
+  required:
+  - items
+  - pagination
+RelationshipListResponse:
+  type: object
+  properties:
+    items:
+      type: array
+      items:
+        $ref: '#/Relationship'
+    pagination:
+      $ref: '#/PaginationMeta'
+  required:
+  - items
+  - pagination
+CollectionListResponse:
+  type: object
+  properties:
+    items:
+      type: array
+      items:
+        $ref: '#/Collection'
+    pagination:
+      $ref: '#/PaginationMeta'
+  required:
+  - items
+  - pagination
+LensListResponse:
+  type: object
+  properties:
+    items:
+      type: array
+      items:
+        $ref: '#/Lens'
+    pagination:
+      $ref: '#/PaginationMeta'
+  required:
+  - items
+  - pagination
+DomainPackListResponse:
+  type: object
+  properties:
+    items:
+      type: array
+      items:
+        $ref: '#/DomainPack'
+    pagination:
+      $ref: '#/PaginationMeta'
+  required:
+  - items
+  - pagination
+TemplateListResponse:
+  type: object
+  properties:
+    items:
+      type: array
+      items:
+        $ref: '#/Template'
+    pagination:
+      $ref: '#/PaginationMeta'
+  required:
+  - items
+  - pagination
+VocabularyListResponse:
+  type: object
+  properties:
+    items:
+      type: array
+      items:
+        $ref: '#/Vocabulary'
+    pagination:
+      $ref: '#/PaginationMeta'
+  required:
+  - items
+  - pagination
+DeleteResponse:
+  type: object
+  properties:
+    status:
+      type: string
+      enum:
+      - deleted
+      - archived
+    id:
+      $ref: '#/Id'
+  required:
+  - status
+  - id
+SimpleStatusResponse:
+  type: object
+  properties:
+    status:
+      type: string
+    message:
+      type: string
+  required:
+  - status

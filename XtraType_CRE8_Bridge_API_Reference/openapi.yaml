@@ -1,0 +1,345 @@
+openapi: 3.1.0
+info:
+  title: XtraType on CRE8 Bridge API
+  version: 0.1.0-draft
+  summary: OpenAPI-style bridge contract for the XtraType frontend on top of the CRE8
+    authority platform.
+  description: This specification models CRE8 as the authority plane and XtraType
+    as a typed contextual-record domain plane. It intentionally does not expose raw
+    CRE8 Post semantics as the frontend contract. WebSocket / realtime events are
+    noted under `x-realtime-events`, but not fully modeled as native OpenAPI paths.
+servers:
+- url: https://api.example.com
+  description: Production
+- url: https://staging-api.example.com
+  description: Staging
+security:
+- bearerAuth: []
+tags:
+- name: Authority
+  description: Owners, sessions, and actor bootstrap.
+- name: Keys
+  description: Primary author keys, secondary author keys, use keys, and keychains.
+- name: Audience
+  description: Audience groups and subscriptions.
+- name: Bootstrap
+  description: Frontend bootstrap and capability payloads.
+- name: Targets
+  description: Target lifecycle and target resolution APIs.
+- name: Entries
+  description: Typed XtraType entries.
+- name: Comments
+  description: Conversational comments.
+- name: Capture
+  description: Capture entrypoints for browser, mobile, import, voice, scan, and AR.
+- name: Sources
+  description: Source records and imported artifacts.
+- name: Evidence
+  description: Evidence packets, chains, and support attachments.
+- name: Relationships
+  description: Typed object relationships.
+- name: Collections
+  description: Collections and membership.
+- name: Views
+  description: Lenses and projection queries.
+- name: Governance
+  description: Workflow, review, moderation, routing, visibility, provenance, and
+    trust.
+- name: Sharing
+  description: Share tokens and links.
+- name: Configuration
+  description: Domain packs, templates, vocabularies, and schema proposals.
+- name: Suggestions
+  description: Explainable automation and suggestion APIs.
+- name: Search
+  description: Search and view projection queries.
+- name: Media
+  description: Upload and media processing.
+- name: Activity
+  description: Activity feeds and audit log.
+- name: Live
+  description: Live rooms and collaboration presence.
+- name: Publication
+  description: Publications, overlays, and public-facing projections.
+- name: Public
+  description: Unauthenticated public endpoints.
+- name: Composer
+  description: Adaptive composer convenience endpoints.
+- name: Batch
+  description: Mixed-object hydration and permission resolution.
+x-realtime-events:
+- entry.updated
+- comment.created
+- relationship.created
+- review.assigned
+- moderation.changed
+- publication.changed
+- overlay.updated
+- presence.updated
+- audience.subscription_changed
+paths:
+  /v1/owners:
+    $ref: ./paths/v1_owners.yaml
+  /v1/sessions/owner:
+    $ref: ./paths/v1_sessions_owner.yaml
+  /v1/sessions/key:
+    $ref: ./paths/v1_sessions_key.yaml
+  /v1/sessions/keychain:
+    $ref: ./paths/v1_sessions_keychain.yaml
+  /v1/sessions/refresh:
+    $ref: ./paths/v1_sessions_refresh.yaml
+  /v1/sessions/current:
+    $ref: ./paths/v1_sessions_current.yaml
+  /v1/me:
+    $ref: ./paths/v1_me.yaml
+  /v1/keys:
+    $ref: ./paths/v1_keys.yaml
+  /v1/keys/{keyId}:
+    $ref: ./paths/v1_keys_keyid.yaml
+  /v1/keys/{keyId}/revoke:
+    $ref: ./paths/v1_keys_keyid_revoke.yaml
+  /v1/keys/{keyId}/rotate:
+    $ref: ./paths/v1_keys_keyid_rotate.yaml
+  /v1/keychains:
+    $ref: ./paths/v1_keychains.yaml
+  /v1/keychains/{keychainId}:
+    $ref: ./paths/v1_keychains_keychainid.yaml
+  /v1/keychains/{keychainId}/keys:
+    $ref: ./paths/v1_keychains_keychainid_keys.yaml
+  /v1/keychains/{keychainId}/keys/{keyId}:
+    $ref: ./paths/v1_keychains_keychainid_keys_keyid.yaml
+  /v1/audience-groups:
+    $ref: ./paths/v1_audience_groups.yaml
+  /v1/audience-groups/{audienceGroupId}:
+    $ref: ./paths/v1_audience_groups_audiencegroupid.yaml
+  /v1/audience-groups/{audienceGroupId}/members:
+    $ref: ./paths/v1_audience_groups_audiencegroupid_members.yaml
+  /v1/audience-groups/{audienceGroupId}/members/{memberId}:
+    $ref: ./paths/v1_audience_groups_audiencegroupid_members_memberid.yaml
+  /v1/audience-groups/{audienceGroupId}/subscribe:
+    $ref: ./paths/v1_audience_groups_audiencegroupid_subscribe.yaml
+  /v1/audience-groups/{audienceGroupId}/unsubscribe:
+    $ref: ./paths/v1_audience_groups_audiencegroupid_unsubscribe.yaml
+  /v1/bootstrap:
+    $ref: ./paths/v1_bootstrap.yaml
+  /v1/capabilities:
+    $ref: ./paths/v1_capabilities.yaml
+  /v1/targets:
+    $ref: ./paths/v1_targets.yaml
+  /v1/targets/resolve:
+    $ref: ./paths/v1_targets_resolve.yaml
+  /v1/targets/bulk-resolve:
+    $ref: ./paths/v1_targets_bulk_resolve.yaml
+  /v1/targets/{targetId}:
+    $ref: ./paths/v1_targets_targetid.yaml
+  /v1/targets/{targetId}/entries:
+    $ref: ./paths/v1_targets_targetid_entries.yaml
+  /v1/targets/{targetId}/relationships:
+    $ref: ./paths/v1_targets_targetid_relationships.yaml
+  /v1/targets/{targetId}/activity:
+    $ref: ./paths/v1_targets_targetid_activity.yaml
+  /v1/targets/{targetId}/merge:
+    $ref: ./paths/v1_targets_targetid_merge.yaml
+  /v1/targets/{targetId}/alias:
+    $ref: ./paths/v1_targets_targetid_alias.yaml
+  /v1/targets/{targetId}/supersede:
+    $ref: ./paths/v1_targets_targetid_supersede.yaml
+  /v1/entries:
+    $ref: ./paths/v1_entries.yaml
+  /v1/entries/{entryId}:
+    $ref: ./paths/v1_entries_entryid.yaml
+  /v1/entries/{entryId}/clone:
+    $ref: ./paths/v1_entries_entryid_clone.yaml
+  /v1/entries/{entryId}/convert:
+    $ref: ./paths/v1_entries_entryid_convert.yaml
+  /v1/entries/{entryId}/history:
+    $ref: ./paths/v1_entries_entryid_history.yaml
+  /v1/entries/{entryId}/autosave:
+    $ref: ./paths/v1_entries_entryid_autosave.yaml
+  /v1/entries/{entryId}/submit-for-review:
+    $ref: ./paths/v1_entries_entryid_submit_for_review.yaml
+  /v1/entries/{entryId}/publish:
+    $ref: ./paths/v1_entries_entryid_publish.yaml
+  /v1/entries/{entryId}/archive:
+    $ref: ./paths/v1_entries_entryid_archive.yaml
+  /v1/comments:
+    $ref: ./paths/v1_comments.yaml
+  /v1/comments/{commentId}:
+    $ref: ./paths/v1_comments_commentid.yaml
+  /v1/captures/browser:
+    $ref: ./paths/v1_captures_browser.yaml
+  /v1/captures/mobile:
+    $ref: ./paths/v1_captures_mobile.yaml
+  /v1/captures/import:
+    $ref: ./paths/v1_captures_import.yaml
+  /v1/captures/voice:
+    $ref: ./paths/v1_captures_voice.yaml
+  /v1/captures/object-scan:
+    $ref: ./paths/v1_captures_object_scan.yaml
+  /v1/captures/ar:
+    $ref: ./paths/v1_captures_ar.yaml
+  /v1/sources:
+    $ref: ./paths/v1_sources.yaml
+  /v1/sources/{sourceId}:
+    $ref: ./paths/v1_sources_sourceid.yaml
+  /v1/evidence-packets:
+    $ref: ./paths/v1_evidence_packets.yaml
+  /v1/evidence-packets/{packetId}:
+    $ref: ./paths/v1_evidence_packets_packetid.yaml
+  /v1/evidence-chains:
+    $ref: ./paths/v1_evidence_chains.yaml
+  /v1/assertions/{entryId}/support:
+    $ref: ./paths/v1_assertions_entryid_support.yaml
+  /v1/relationships:
+    $ref: ./paths/v1_relationships.yaml
+  /v1/relationships/{relationshipId}:
+    $ref: ./paths/v1_relationships_relationshipid.yaml
+  /v1/relationships/bulk:
+    $ref: ./paths/v1_relationships_bulk.yaml
+  /v1/collections:
+    $ref: ./paths/v1_collections.yaml
+  /v1/collections/{collectionId}:
+    $ref: ./paths/v1_collections_collectionid.yaml
+  /v1/collections/{collectionId}/members:
+    $ref: ./paths/v1_collections_collectionid_members.yaml
+  /v1/collections/{collectionId}/members/{memberRef}:
+    $ref: ./paths/v1_collections_collectionid_members_memberref.yaml
+  /v1/collections/{collectionId}/ordering:
+    $ref: ./paths/v1_collections_collectionid_ordering.yaml
+  /v1/collections/{collectionId}/activity:
+    $ref: ./paths/v1_collections_collectionid_activity.yaml
+  /v1/collections/{collectionId}/view-data:
+    $ref: ./paths/v1_collections_collectionid_view_data.yaml
+  /v1/lenses:
+    $ref: ./paths/v1_lenses.yaml
+  /v1/lenses/{lensId}:
+    $ref: ./paths/v1_lenses_lensid.yaml
+  /v1/views/query:
+    $ref: ./paths/v1_views_query.yaml
+  /v1/governance/review-actions:
+    $ref: ./paths/v1_governance_review_actions.yaml
+  /v1/governance/moderation-actions:
+    $ref: ./paths/v1_governance_moderation_actions.yaml
+  /v1/governance/resolution-actions:
+    $ref: ./paths/v1_governance_resolution_actions.yaml
+  /v1/governance/publication-actions:
+    $ref: ./paths/v1_governance_publication_actions.yaml
+  /v1/governance/routing-actions:
+    $ref: ./paths/v1_governance_routing_actions.yaml
+  /v1/objects/{kind}/{id}/visibility:
+    $ref: ./paths/v1_objects_kind_id_visibility.yaml
+  /v1/objects/{kind}/{id}/permissions/effective:
+    $ref: ./paths/v1_objects_kind_id_permissions_effective.yaml
+  /v1/shares:
+    $ref: ./paths/v1_shares.yaml
+  /v1/provenance/{objectKind}/{id}:
+    $ref: ./paths/v1_provenance_objectkind_id.yaml
+  /v1/trust/{objectKind}/{id}:
+    $ref: ./paths/v1_trust_objectkind_id.yaml
+  /v1/domain-packs:
+    $ref: ./paths/v1_domain_packs.yaml
+  /v1/domain-packs/{domainPackId}:
+    $ref: ./paths/v1_domain_packs_domainpackid.yaml
+  /v1/templates:
+    $ref: ./paths/v1_templates.yaml
+  /v1/templates/{templateId}:
+    $ref: ./paths/v1_templates_templateid.yaml
+  /v1/vocabularies:
+    $ref: ./paths/v1_vocabularies.yaml
+  /v1/vocabularies/{vocabularyId}:
+    $ref: ./paths/v1_vocabularies_vocabularyid.yaml
+  /v1/schema-proposals:
+    $ref: ./paths/v1_schema_proposals.yaml
+  /v1/schema-proposals/{proposalId}/review:
+    $ref: ./paths/v1_schema_proposals_proposalid_review.yaml
+  /v1/schema-proposals/{proposalId}/promote:
+    $ref: ./paths/v1_schema_proposals_proposalid_promote.yaml
+  /v1/suggestions:
+    $ref: ./paths/v1_suggestions.yaml
+  /v1/suggestions/{suggestionId}/accept:
+    $ref: ./paths/v1_suggestions_suggestionid_accept.yaml
+  /v1/suggestions/{suggestionId}/reject:
+    $ref: ./paths/v1_suggestions_suggestionid_reject.yaml
+  /v1/search:
+    $ref: ./paths/v1_search.yaml
+  /v1/graph/query:
+    $ref: ./paths/v1_graph_query.yaml
+  /v1/map/query:
+    $ref: ./paths/v1_map_query.yaml
+  /v1/timeline/query:
+    $ref: ./paths/v1_timeline_query.yaml
+  /v1/compare/query:
+    $ref: ./paths/v1_compare_query.yaml
+  /v1/dossier/query:
+    $ref: ./paths/v1_dossier_query.yaml
+  /v1/queue/query:
+    $ref: ./paths/v1_queue_query.yaml
+  /v1/uploads/initiate:
+    $ref: ./paths/v1_uploads_initiate.yaml
+  /v1/uploads/complete:
+    $ref: ./paths/v1_uploads_complete.yaml
+  /v1/media/{mediaId}:
+    $ref: ./paths/v1_media_mediaid.yaml
+  /v1/media/{mediaId}/attach:
+    $ref: ./paths/v1_media_mediaid_attach.yaml
+  /v1/media/{mediaId}/transcribe:
+    $ref: ./paths/v1_media_mediaid_transcribe.yaml
+  /v1/media/{mediaId}/extract-metadata:
+    $ref: ./paths/v1_media_mediaid_extract_metadata.yaml
+  /v1/media/{mediaId}/generate-derivatives:
+    $ref: ./paths/v1_media_mediaid_generate_derivatives.yaml
+  /v1/activity:
+    $ref: ./paths/v1_activity.yaml
+  /v1/objects/{kind}/{id}/activity:
+    $ref: ./paths/v1_objects_kind_id_activity.yaml
+  /v1/audit-log:
+    $ref: ./paths/v1_audit_log.yaml
+  /v1/live-rooms:
+    $ref: ./paths/v1_live_rooms.yaml
+  /v1/live-rooms/{liveRoomId}:
+    $ref: ./paths/v1_live_rooms_liveroomid.yaml
+  /v1/live-rooms/{liveRoomId}/join:
+    $ref: ./paths/v1_live_rooms_liveroomid_join.yaml
+  /v1/live-rooms/{liveRoomId}/leave:
+    $ref: ./paths/v1_live_rooms_liveroomid_leave.yaml
+  /v1/publications:
+    $ref: ./paths/v1_publications.yaml
+  /v1/publications/{publicationId}:
+    $ref: ./paths/v1_publications_publicationid.yaml
+  /v1/publications/{publicationId}/unpublish:
+    $ref: ./paths/v1_publications_publicationid_unpublish.yaml
+  /v1/overlays:
+    $ref: ./paths/v1_overlays.yaml
+  /v1/overlays/query:
+    $ref: ./paths/v1_overlays_query.yaml
+  /v1/overlays/{overlayId}:
+    $ref: ./paths/v1_overlays_overlayid.yaml
+  /public/records/{slug}:
+    $ref: ./paths/public_records_slug.yaml
+  /public/collections/{slug}:
+    $ref: ./paths/public_collections_slug.yaml
+  /public/overlays/{slug}:
+    $ref: ./paths/public_overlays_slug.yaml
+  /public/maps/{slug}:
+    $ref: ./paths/public_maps_slug.yaml
+  /public/timelines/{slug}:
+    $ref: ./paths/public_timelines_slug.yaml
+  /public/history/{slug}:
+    $ref: ./paths/public_history_slug.yaml
+  /public/embed/{slug}:
+    $ref: ./paths/public_embed_slug.yaml
+  /v1/composer/init:
+    $ref: ./paths/v1_composer_init.yaml
+  /v1/composer/validate:
+    $ref: ./paths/v1_composer_validate.yaml
+  /v1/composer/commit:
+    $ref: ./paths/v1_composer_commit.yaml
+  /v1/batch/read:
+    $ref: ./paths/v1_batch_read.yaml
+  /v1/batch/permissions:
+    $ref: ./paths/v1_batch_permissions.yaml
+components:
+  securitySchemes:
+    $ref: ./components/securitySchemes.yaml
+  schemas:
+    $ref: ./components/schemas.yaml
