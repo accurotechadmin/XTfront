@@ -1,0 +1,26 @@
+{
+  "gate": "gate1_envelope_error_request_id",
+  "run_at": "2026-04-09T16:15:00Z",
+  "status": "green",
+  "checks": {
+    "envelope_shape_conformance": {
+      "status": "pass",
+      "covered_routes": 11
+    },
+    "error_code_detail_code_compatibility": {
+      "status": "pass",
+      "covered_routes": 11,
+      "mismatches": 0
+    },
+    "request_id_propagation_visibility": {
+      "status": "pass",
+      "covered_routes": 11,
+      "missing": 0
+    }
+  },
+  "route_families": {
+    "auth": "green",
+    "feed": "green",
+    "keychain": "green"
+  }
+}
